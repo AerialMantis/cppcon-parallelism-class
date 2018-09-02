@@ -14,14 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-namespace cppcon::sequential {
+#ifndef __SEQUENTIAL_REDUCE_H__
+#define __SEQUENTIAL_REDUCE_H__
 
-template <class InputIt, class T>
-T accumulate(InputIt first, InputIt last, T init) {
+#include <bits/policies.h>
+
+namespace cppcon {
+
+template <class ForwardIt, class T, class BinaryOperation>
+T reduce(seq_execution_policy_t policy, ForwardIt first, ForwardIt last,
+         T init, BinaryOperation binary_op) {
   for (; first != last; ++first) {
-    init = init + *first;
+    init = binary_op(init, *first);
   }
   return init;
 }
 
-}  // namespace cppcon::sequential
+}  // namespace cppcon
+
+#endif  // __SEQUENTIAL_REDUCE_H__

@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <algorithm>
+#ifndef __BENCHMARK_H__
+#define __BENCHMARK_H__
+
 #include <chrono>
 #include <iostream>
 #include <numeric>
@@ -59,9 +61,10 @@ void print_time<std::milli>(
             << unit_extension_v<std::milli> << "\n";
 }
 
-void init_data(std::vector<int> &vec) {
+template <typename InitFunc>
+void init_data(std::vector<int> &vec, InitFunc initFunc) {
   for (int i = 0; i < vec.size(); i++) {
-    vec[i] = i;
+    initFunc(vec[i], i);
   }
 }
 
@@ -86,3 +89,5 @@ void print(const std::vector<int> &vec, std::string tag) {
   }
   std::cout << "\n";
 }
+
+#endif  // __BENCHMARK_H__

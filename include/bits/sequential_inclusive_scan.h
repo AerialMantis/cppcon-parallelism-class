@@ -1,0 +1,36 @@
+/*
+Copyright 2018 Gordon Brown
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+#ifndef __SEQUENTIAL_INCLUSIVE_SCAN_H__
+#define __SEQUENTIAL_INCLUSIVE_SCAN_H__
+
+namespace cppcon {
+
+template <class ForwardIt1, class ForwardIt2>
+ForwardIt2 inclusive_scan(seq_execution_policy_t policy, ForwardIt1 first,
+                          ForwardIt1 last, ForwardIt2 d_first) {
+  typename ForwardIt1::value_type sum{};
+
+  for (; first != last; ++first, (void)++d_first) {
+    sum += *first;
+    *d_first = sum;
+  }
+  return d_first;
+}
+
+}  // namespace cppcon
+
+#endif  // __SEQUENTIAL_INCLUSIVE_SCAN_H__

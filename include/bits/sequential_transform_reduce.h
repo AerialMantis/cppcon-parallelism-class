@@ -14,15 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-namespace cppcon::sequential {
+#ifndef __SEQUENTIAL_TRANSFORM_REDUCE_H__
+#define __SEQUENTIAL_TRANSFORM_REDUCE_H__
 
-template <class InputIt, class OutputIt, class UnaryOperation>
-OutputIt transform(InputIt first, InputIt last, OutputIt d_first,
-                   UnaryOperation unary_op) {
-  while (first != last) {
-    *d_first++ = unary_op(*first++);
+#include <bits/policies.h>
+
+namespace cppcon {
+
+template <class ForwardIt, class T, class UnaryOperation, class BinaryOperation>
+T transform_reduce(seq_execution_policy_t policy, ForwardIt first,
+                   ForwardIt last, T init, UnaryOperation unary_op,
+                   BinaryOperation binary_op) {
+  for (; first != last; ++first) {
+    init = binary_op(init, unary_op(*first));
   }
-  return d_first;
+  return init;
 }
 
-}  // namespace cppcon::sequential
+}  // namespace cppcon
+
+#endif  // __SEQUENTIAL_TRANSFORM_REDUCE_H__

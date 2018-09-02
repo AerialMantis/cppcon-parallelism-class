@@ -14,18 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-namespace cppcon::sequential {
+#ifndef __SEQUENTIAL_TRANSFORM_H__
+#define __SEQUENTIAL_TRANSFORM_H__
 
-template<class InputIt, class OutputIt>
-OutputIt inclusive_scan(InputIt first, InputIt last, OutputIt d_first) {
-    typename InputIt::value_type sum{};
-    
-    for (; first != last; ++first, (void)++d_first) {
-        sum += *first;
-        *d_first = sum;
-    }
-    return d_first;
+#include <bits/policies.h>
+
+namespace cppcon {
+
+template <class ForwardIt1, class ForwardIt2, class UnaryOperation>
+ForwardIt2 transform(seq_execution_policy_t policy, ForwardIt1 first,
+                     ForwardIt1 last, ForwardIt2 d_first,
+                     UnaryOperation unary_op) {
+  while (first != last) {
+    *d_first++ = unary_op(*first++);
+  }
+  return d_first;
 }
 
+}  // namespace cppcon
 
-}  // namespace cppcon::sequential
+#endif  // __SEQUENTIAL_TRANSFORM_H__
