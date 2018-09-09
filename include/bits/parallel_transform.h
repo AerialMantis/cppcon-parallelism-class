@@ -31,6 +31,8 @@ OutputIt transform(par_execution_policy_t policy, ForwardIt first,
                    ForwardIt last, OutputIt d_first, UnaryOperation unary_op) {
   using diff_t = typename std::iterator_traits<ForwardIt>::difference_type;
 
+  if (first == last) return d_first;
+
   unsigned int concurrency = std::thread::hardware_concurrency();
   diff_t numElements = std::distance(first, last);
   diff_t elementsPerThread = numElements / concurrency;
@@ -39,17 +41,17 @@ OutputIt transform(par_execution_policy_t policy, ForwardIt first,
   auto processChunk = [unary_op](ForwardIt input, OutputIt output,
                                  size_t numElements) {
     for (unsigned int i = 0; i < numElements; i++) {
-      *output++ = std::invoke(unary_op, *input++);
+      *output++ = unary_op(*input++);
     }
   };
 
   std::vector<std::thread> threads(0);
   threads.reserve(concurrency - 1);
-  for (unsigned int t = 0; t < (concurrency - 1); t++) {
+  for (unsigned int t = 1; t < concurrency; t++) {
     diff_t currentChunkSize =
-        elementsPerThread + static_cast<diff_t>((t + 1) < remainder);
-    diff_t currentOffset = ((t + 1) * elementsPerThread) +
-                           std::min(static_cast<diff_t>(t + 2), remainder);
+        elementsPerThread + static_cast<diff_t>(t < remainder);
+    diff_t currentOffset = (t * elementsPerThread) +
+                           std::min(static_cast<diff_t>(t), remainder);
     threads.emplace_back(
         [processChunk, currentChunkSize,
          batch = std::next(first, currentOffset),

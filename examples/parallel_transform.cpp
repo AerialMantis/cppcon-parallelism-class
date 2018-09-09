@@ -41,7 +41,7 @@ TEST_CASE("cppcon::transform(par)", "parallel_transform") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index; });
+    init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     auto time = eval_performance(
         [&]() {
@@ -59,7 +59,7 @@ TEST_CASE("cppcon::transform(par)", "parallel_transform") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index; });
+    init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     auto time = eval_performance(
         [&]() {

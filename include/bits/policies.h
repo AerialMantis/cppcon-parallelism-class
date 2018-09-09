@@ -22,10 +22,16 @@ namespace cppcon {
 struct seq_execution_policy_t {};
 struct par_execution_policy_t {};
 struct par_unseq_execution_policy_t {};
+template <typename T>
+struct sycl_execution_policy_t {
+  using kernel_name_t = T;
+};
 
-constexpr seq_execution_policy_t seq;
-constexpr par_execution_policy_t par;
-constexpr par_unseq_execution_policy_t par_unseq;
+constexpr seq_execution_policy_t seq{};
+constexpr par_execution_policy_t par{};
+constexpr par_unseq_execution_policy_t par_unseq{};
+template <typename T>
+constexpr sycl_execution_policy_t<T> sycl{};
 
 }  // namespace cppcon
 

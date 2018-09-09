@@ -20,44 +20,47 @@ limitations under the License.
 #include <benchmark.h>
 #include <cppcon_solution>
 
-constexpr int size = 2097152;
+constexpr int size = 4194304;
 constexpr int iterations = 10;
 
-TEST_CASE("cppcon::reduce(seq)", "sequential_reduce") {
-  int result{0};
-  int expected{0};
+TEST_CASE("cppcon::inclusive_scan(seq)", "sequential_inclusive_scan") {
+  std::vector<int> result(size);
+  std::vector<int> expected(size);
 
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index; });
+    init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     auto time = eval_performance(
         [&]() {
-          result = cppcon::reduce(cppcon::seq, input.begin(), input.end(), 0,
-                                  std::plus<>());
+          cppcon::inclusive_scan(cppcon::seq, input.begin(), input.end(),
+                                 result.begin(), std::plus<>(), 0);
+        },
+        iterations);
+
+    print_time<std::milli>("cppcon::inclusive_scan(seq) (" +
+                               std::to_string(iterations) + " iterations)",
+                           time);
+  }
+
+  {
+    auto input = std::vector<int>(size);
+
+    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+
+    auto time = eval_performance(
+        [&]() {
+          std::partial_sum(input.begin(), input.end(), expected.begin());
         },
         iterations);
 
     print_time<std::milli>(
-        "cppcon::reduce(seq) (" + std::to_string(iterations) + " iterations)",
+        "std::partial_sum (" + std::to_string(iterations) + " iterations)",
         time);
   }
 
-  {
-    auto input = std::vector<int>(size);
-    int output = 0;
-
-    init_data(input, [](int &value, unsigned index) { value = index; });
-
-    auto time = eval_performance(
-        [&]() { expected = std::accumulate(input.begin(), input.end(), 0); },
-        iterations);
-
-    print_time<std::milli>(
-        "std::accumulate (" + std::to_string(iterations) + " iterations)",
-        time);
+  for (int i = 0; i < size; i++) {
+    REQUIRE(result[i] == expected[i]);
   }
-
-  REQUIRE(result == expected);
 }

@@ -20,10 +20,12 @@ limitations under the License.
 #include <benchmark.h>
 #include <cppcon_solution>
 
-constexpr int size = 2097152;
-constexpr int iterations = 10;
+constexpr int size = 8192;
+constexpr int iterations = 1;
 
-TEST_CASE("cppcon::transform_reduce(seq)", "sequential_transform_reduce") {
+class plus;
+
+TEST_CASE("cppcon::reduce(sycl)", "gpu_reduce") {
   int result{0};
   int expected{0};
 
@@ -32,37 +34,30 @@ TEST_CASE("cppcon::transform_reduce(seq)", "sequential_transform_reduce") {
 
     init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    auto cppconTime = eval_performance(
         [&]() {
-          result = cppcon::transform_reduce(
-              cppcon::seq, input.begin(), input.end(), 0,
-              [](int &in) { return in * 2; }, std::plus<>());
+          result = cppcon::reduce(cppcon::sycl<plus>, input.begin(), input.end(), 42,
+                                  std::plus<>());
         },
         iterations);
 
-    print_time<std::milli>("cppcon::transform_reduce(seq) (" +
-                               std::to_string(iterations) + " iterations)",
-                           time);
+    print_time<std::milli>(
+        "cppcon::reduce(sycl) (" + std::to_string(iterations) + " iterations)",
+        cppconTime);
   }
 
   {
     auto input = std::vector<int>(size);
-    auto temp = std::vector<int>(size);
 
     init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     auto time = eval_performance(
-        [&]() {
-          std::transform(input.begin(), input.end(), temp.begin(),
-                         [](int &in) { return in * 2; });
-
-          expected = std::accumulate(temp.begin(), temp.end(), 0);
-        },
+        [&]() { expected = std::accumulate(input.begin(), input.end(), 42); },
         iterations);
 
-    print_time<std::milli>("std::transform & std::accumulate (" +
-                               std::to_string(iterations) + " iterations)",
-                           time);
+    print_time<std::milli>(
+        "std::accumulate (" + std::to_string(iterations) + " iterations)",
+        time);
   }
 
   REQUIRE(result == expected);

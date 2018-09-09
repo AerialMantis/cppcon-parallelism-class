@@ -30,11 +30,11 @@ TEST_CASE("cppcon::reduce(par)", "parallel_reduce") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index; });
+    init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     auto cppconTime = eval_performance(
         [&]() {
-          result = cppcon::reduce(cppcon::par, input.begin(), input.end(), 0,
+          result = cppcon::reduce(cppcon::par, input.begin(), input.end(), 42,
                                   std::plus<>());
         },
         iterations);
@@ -47,10 +47,10 @@ TEST_CASE("cppcon::reduce(par)", "parallel_reduce") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index; });
+    init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     auto time = eval_performance(
-        [&]() { expected = std::accumulate(input.begin(), input.end(), 0); },
+        [&]() { expected = std::accumulate(input.begin(), input.end(), 42); },
         iterations);
 
     print_time<std::milli>(

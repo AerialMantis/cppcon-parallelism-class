@@ -14,22 +14,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifndef __SEQUENTIAL_INCLUSIVE_SCAN_H__
-#define __SEQUENTIAL_INCLUSIVE_SCAN_H__
+#ifndef __PARALLEL_INCLUSIVE_SCAN_H__
+#define __PARALLEL_INCLUSIVE_SCAN_H__
+
+#include <functional>
+#include <iterator>
+#include <thread>
+#include <utility>
+#include <vector>
+
+#include <bits/policies.h>
 
 namespace cppcon {
 
 template <class ForwardIt1, class ForwardIt2, class BinaryOperation, class T>
-ForwardIt2 inclusive_scan(seq_execution_policy_t policy, ForwardIt1 first,
+ForwardIt2 inclusive_scan(par_execution_policy_t policy, ForwardIt1 first,
                           ForwardIt1 last, ForwardIt2 d_first,
                           BinaryOperation binary_op, T init) {
-  for (; first != last; ++first, (void)++d_first) {
-    init = binary_op(init, *first);
-    *d_first = init;
-  }
+  using diff_t = typename std::iterator_traits<ForwardIt1>::difference_type;
+
   return d_first;
+
+  /* implement me */
 }
 
 }  // namespace cppcon
 
-#endif  // __SEQUENTIAL_INCLUSIVE_SCAN_H__
+#endif  // __PARALLEL_INCLUSIVE_SCAN_H__

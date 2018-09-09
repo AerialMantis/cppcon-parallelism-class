@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifndef __PARALLEL_REDUCE_H__
-#define __PARALLEL_REDUCE_H__
+#ifndef __PARALLEL_TRANSFORM_REDUCE_H__
+#define __PARALLEL_TRANSFORM_REDUCE_H__
 
 #include <functional>
 #include <iterator>
@@ -27,9 +27,10 @@ limitations under the License.
 
 namespace cppcon {
 
-template <class ForwardIt, class T, class BinaryOperation>
-T reduce(par_execution_policy_t policy, ForwardIt first, ForwardIt last, T init,
-         BinaryOperation binary_op) {
+template <class ForwardIt, class T, class BinaryOperation, class UnaryOperation>
+T transform_reduce(par_execution_policy_t policy, ForwardIt first,
+                   ForwardIt last, T init, BinaryOperation binary_op,
+                   UnaryOperation unary_op) {
   using diff_t = typename std::iterator_traits<ForwardIt>::difference_type;
 
   if (first == last) return init;
@@ -47,6 +48,15 @@ T reduce(par_execution_policy_t policy, ForwardIt first, ForwardIt last, T init,
     return partialReduce;
   };
 
+  auto processChunkWithTransform = [unary_op, binary_op](ForwardIt c_first,
+                                                         ForwardIt c_last) {
+    T partialReduce{0};
+    while (c_first != c_last) {
+      partialReduce = binary_op(partialReduce, unary_op(*c_first++));
+    }
+    return partialReduce;
+  };
+
   std::vector<std::thread> threads(0);
   threads.reserve(concurrency - 1);
   std::vector<T> partialReductions(8);
@@ -56,17 +66,19 @@ T reduce(par_execution_policy_t policy, ForwardIt first, ForwardIt last, T init,
     diff_t currentOffset =
         (t * elementsPerThread) + std::min(static_cast<diff_t>(t), remainder);
     threads.emplace_back([
-      t, processChunk = std::move(processChunk),
+      t, processChunkWithTransform = std::move(processChunkWithTransform),
       currentChunkSize = std::move(currentChunkSize),
       c_first = std::next(first, currentOffset),
       c_last = std::next(first, currentOffset + currentChunkSize),
       &partialReductions
-    ]() mutable { partialReductions[t] = processChunk(c_first, c_last); });
+    ]() mutable {
+      partialReductions[t] = processChunkWithTransform(c_first, c_last);
+    });
   }
   diff_t currentChunkSize =
       elementsPerThread + static_cast<diff_t>(0 < remainder);
   partialReductions[0] =
-      processChunk(first, std::next(first, currentChunkSize));
+      processChunkWithTransform(first, std::next(first, currentChunkSize));
 
   for (auto &thread : threads) {
     thread.join();
@@ -78,4 +90,4 @@ T reduce(par_execution_policy_t policy, ForwardIt first, ForwardIt last, T init,
 
 }  // namespace cppcon
 
-#endif  // __PARALLEL_REDUCE_H__
+#endif  // __PARALLEL_TRANSFORM_REDUCE_H__

@@ -23,23 +23,23 @@ limitations under the License.
 constexpr int size = 4194304;
 constexpr int iterations = 10;
 
-TEST_CASE("cppcon::transform(seq)", "sequential_transform") {
+TEST_CASE("cppcon::inclusive_scan(par)", "parallel_inclusive_scan") {
   std::vector<int> result(size);
   std::vector<int> expected(size);
 
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index; });
+    init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     auto time = eval_performance(
         [&]() {
-          cppcon::transform(cppcon::seq, input.begin(), input.end(),
-                            result.begin(), [](int &in) { return in * 2; });
+          cppcon::inclusive_scan(cppcon::par, input.begin(), input.end(),
+                                 result.begin(), std::plus<>(), 0);
         },
         iterations);
 
-    print_time<std::milli>("cppcon::transform(seq) (" +
+    print_time<std::milli>("cppcon::inclusive_scan(par) (" +
                                std::to_string(iterations) + " iterations)",
                            time);
   }
@@ -47,17 +47,17 @@ TEST_CASE("cppcon::transform(seq)", "sequential_transform") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index; });
+    init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     auto time = eval_performance(
         [&]() {
-          std::transform(input.begin(), input.end(), expected.begin(),
-                         [](int &in) { return in * 2; });
+          std::partial_sum(input.begin(), input.end(), expected.begin());
         },
         iterations);
 
     print_time<std::milli>(
-        "std::transform (" + std::to_string(iterations) + " iterations)", time);
+        "std::partial_sum (" + std::to_string(iterations) + " iterations)",
+        time);
   }
 
   for (int i = 0; i < size; i++) {

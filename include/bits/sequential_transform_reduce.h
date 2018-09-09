@@ -21,10 +21,10 @@ limitations under the License.
 
 namespace cppcon {
 
-template <class ForwardIt, class T, class UnaryOperation, class BinaryOperation>
+template <class ForwardIt, class T, class BinaryOperation, class UnaryOperation>
 T transform_reduce(seq_execution_policy_t policy, ForwardIt first,
-                   ForwardIt last, T init, UnaryOperation unary_op,
-                   BinaryOperation binary_op) {
+                   ForwardIt last, T init, BinaryOperation binary_op,
+                   UnaryOperation unary_op) {
   for (; first != last; ++first) {
     init = binary_op(init, unary_op(*first));
   }
