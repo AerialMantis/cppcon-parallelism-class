@@ -26,6 +26,7 @@ limitations under the License.
 #include <bits/parallel_reduce.h>
 #include <bits/parallel_transform_reduce.h>
 #include <bits/parallel_inclusive_scan.h>
+#include <bits/gpu_transform.h>
 #include <bits/gpu_reduce.h>
 
 #endif  // __EXECUTION__

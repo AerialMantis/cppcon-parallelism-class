@@ -17,33 +17,44 @@ limitations under the License.
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
+#include <algorithm>
+
 #include <benchmark.h>
 #include <cppcon_solution>
 
 constexpr int size = 4096 /*4194304*/;
 constexpr int iterations = 10;
 
-class plus;
+int pow(int in, int power) {
+  for (int i = 1; i < power; i++) {
+    in *= i;
+  }
 
-TEST_CASE("cppcon::reduce(sycl)", "gpu_reduce") {
-  int result{0};
-  int expected{0};
+  return in;
+}
+
+class transform;
+
+TEST_CASE("cppcon::transform(sycl)", "gpu_transform") {
+  std::vector<int> result(size);
+  std::vector<int> expected(size);
 
   {
     auto input = std::vector<int>(size);
 
     init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
-    auto cppconTime = eval_performance(
+    auto time = eval_performance(
         [&]() {
-          result = cppcon::reduce(cppcon::sycl<plus>, input.begin(), input.end(), 42,
-                                  std::plus<>());
+          cppcon::transform(cppcon::sycl<transform>, input.begin(), input.end(),
+                            result.begin(),
+                            [](int in) { return pow(in, 10); });
         },
         iterations);
 
-    print_time<std::milli>(
-        "cppcon::reduce(sycl) (" + std::to_string(iterations) + " iterations)",
-        cppconTime);
+    print_time<std::milli>("cppcon::transform(sycl) (" +
+                               std::to_string(iterations) + " iterations)",
+                           time);
   }
 
   {
@@ -52,13 +63,17 @@ TEST_CASE("cppcon::reduce(sycl)", "gpu_reduce") {
     init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     auto time = eval_performance(
-        [&]() { expected = std::accumulate(input.begin(), input.end(), 42); },
+        [&]() {
+          std::transform(input.begin(), input.end(), expected.begin(),
+                         [](int &in) { return pow(in, 10); });
+        },
         iterations);
 
     print_time<std::milli>(
-        "std::accumulate (" + std::to_string(iterations) + " iterations)",
-        time);
+        "std::transform (" + std::to_string(iterations) + " iterations)", time);
   }
 
-  REQUIRE(result == expected);
+  for (int i = 0; i < size; i++) {
+    REQUIRE(result[i] == expected[i]);
+  }
 }

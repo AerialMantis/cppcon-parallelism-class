@@ -46,4 +46,5 @@ add_example(parallel_reduce)
 add_example(parallel_transform_reduce)
 add_example(parallel_inclusive_scan)
 
+add_sycl_example(gpu_transform)
 add_sycl_example(gpu_reduce)
