@@ -23,7 +23,7 @@ limitations under the License.
 #include <utility>
 #include <vector>
 
-#include <bits/policies.h>
+#include <bits/std_policies.h>
 
 namespace cppcon {
 

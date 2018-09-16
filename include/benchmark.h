@@ -61,8 +61,8 @@ void print_time<std::milli>(
             << unit_extension_v<std::milli> << "\n";
 }
 
-template <typename InitFunc>
-void init_data(std::vector<int> &vec, InitFunc initFunc) {
+template <typename InitFunc, typename ValueType>
+void init_data(std::vector<ValueType> &vec, InitFunc initFunc) {
   for (int i = 0; i < vec.size(); i++) {
     initFunc(vec[i], i);
   }
@@ -79,7 +79,7 @@ auto eval_performance(Func &&func, int iterations) {
         std::chrono::system_clock::now();
     totalTime += (end - start);
   }
-  return totalTime;
+  return totalTime / iterations;
 }
 
 void print(const std::vector<int> &vec, std::string tag) {

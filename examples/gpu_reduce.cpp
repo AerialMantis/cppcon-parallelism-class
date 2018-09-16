@@ -18,12 +18,12 @@ limitations under the License.
 #include <catch.hpp>
 
 #include <benchmark.h>
-#include <cppcon_solution>
+#include <sycl_execution>
 
-constexpr int size = 4096 /*4194304*/;
+constexpr int size = 4194304;
 constexpr int iterations = 10;
 
-class plus;
+class reduce;
 
 TEST_CASE("cppcon::reduce(sycl)", "gpu_reduce") {
   int result{0};
@@ -34,9 +34,11 @@ TEST_CASE("cppcon::reduce(sycl)", "gpu_reduce") {
 
     init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
+    cppcon::sycl<reduce> syclPolicy;
+
     auto cppconTime = eval_performance(
         [&]() {
-          result = cppcon::reduce(cppcon::sycl<plus>, input.begin(), input.end(), 42,
+          result = cppcon::reduce(syclPolicy, input.begin(), input.end(), 42,
                                   std::plus<>());
         },
         iterations);

@@ -18,7 +18,7 @@ limitations under the License.
 #include <catch.hpp>
 
 #include <benchmark.h>
-#include <cppcon_solution>
+#include <std_execution>
 
 constexpr int size = 4194304;
 constexpr int iterations = 10;

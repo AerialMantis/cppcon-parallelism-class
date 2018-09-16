@@ -17,6 +17,8 @@ limitations under the License.
 #ifndef __SEQUENTIAL_INCLUSIVE_SCAN_H__
 #define __SEQUENTIAL_INCLUSIVE_SCAN_H__
 
+#include <bits/std_policies.h>
+
 namespace cppcon {
 
 template <class ForwardIt1, class ForwardIt2, class BinaryOperation, class T>

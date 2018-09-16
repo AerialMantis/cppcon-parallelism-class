@@ -48,3 +48,4 @@ add_example(parallel_inclusive_scan)
 
 add_sycl_example(gpu_transform)
 add_sycl_example(gpu_reduce)
+add_sycl_example(gpu_transform_reduce)

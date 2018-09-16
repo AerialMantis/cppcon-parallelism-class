@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifndef __GPU_REDUCE_H__
-#define __GPU_REDUCE_H__
+#ifndef __GPU_TRANSFORM_REDUCE_H__
+#define __GPU_TRANSFORM_REDUCE_H__
 
 #include <functional>
 #include <iterator>
@@ -30,9 +30,10 @@ limitations under the License.
 namespace cppcon {
 
 template <class ContiguousIt, class T, class BinaryOperation,
-          typename KernelName>
-T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
-         ContiguousIt last, T init, BinaryOperation binary_op) {
+          class UnaryOperation, typename KernelName>
+T transform_reduce(sycl_execution_policy_t<KernelName> policy,
+                   ContiguousIt first, ContiguousIt last, T init,
+                   BinaryOperation binary_op, UnaryOperation unary_op) {
   using diff_t = typename std::iterator_traits<ContiguousIt>::difference_type;
   using value_t = typename std::iterator_traits<ContiguousIt>::value_type;
 
@@ -44,17 +45,10 @@ T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
     auto q = policy.get_queue();
     auto d = q.get_device();
 
-    /*
-    auto maxWorkGroupSize =
-        d.template get_info<cl::sycl::info::device::max_work_group_size>();
-    auto maxDims =
-        d.template get_info<cl::sycl::info::device::max_work_group_size>();
-    */
-
     cl::sycl::program prog(q.get_context());
     prog.build_with_kernel_type<KernelName>();
     auto kernel = prog.get_kernel<KernelName>();
-    auto maxWorkGroupSize = kernel.get_work_group_info<
+    auto maxWorkGroupSize = kernel.template get_work_group_info<
         cl::sycl::info::kernel_work_group::work_group_size>(d);
 
     size_t dataSize = std::distance(first, last);
@@ -86,8 +80,6 @@ T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
 
           ndItem.barrier(cl::sycl::access::fence_space::local_space);
 
-          // if (globalId < dataSize) {
-          // auto min = cl::sycl::min(dataSize, maxWorkGroupSize);
           int min = (dataSize < maxWorkGroupSize) ? dataSize : maxWorkGroupSize;
           for (size_t offset = min / 2; offset > 0; offset /= 2) {
             if (localId < offset) {
@@ -101,7 +93,6 @@ T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
           if (localId == 0) {
             inputAcc[groupId] = scratchPad[localId];
           }
-          // }
         });
       });
       dataSize = dataSize / maxWorkGroupSize;
@@ -123,4 +114,4 @@ T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
 
 }  // namespace cppcon
 
-#endif  // __GPU_REDUCE_H__
+#endif  // __GPU_TRANSFORM_REDUCE_H__

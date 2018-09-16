@@ -14,25 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifndef __POLICIES_H__
-#define __POLICIES_H__
+#ifndef __STD_POLICIES_H__
+#define __STD_POLICIES_H__
 
 namespace cppcon {
 
 struct seq_execution_policy_t {};
 struct par_execution_policy_t {};
 struct par_unseq_execution_policy_t {};
-template <typename T>
-struct sycl_execution_policy_t {
-  using kernel_name_t = T;
-};
 
 constexpr seq_execution_policy_t seq{};
 constexpr par_execution_policy_t par{};
 constexpr par_unseq_execution_policy_t par_unseq{};
-template <typename T>
-constexpr sycl_execution_policy_t<T> sycl{};
 
 }  // namespace cppcon
 
-#endif  // __POLICIES_H__
+#endif  // __STD_POLICIES_H__

@@ -14,19 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifndef __EXECUTION__
-#define __EXECUTION__
+#ifndef __SYCL_EXECUTION__
+#define __SYCL_EXECUTION__
 
-#include <bits/policies.h>
-#include <bits/sequential_transform.h>
-#include <bits/sequential_reduce.h>
-#include <bits/sequential_transform_reduce.h>
-#include <bits/sequential_inclusive_scan.h>
-#include <bits/parallel_transform.h>
-#include <bits/parallel_reduce.h>
-#include <bits/parallel_transform_reduce.h>
-#include <bits/parallel_inclusive_scan.h>
 #include <bits/gpu_transform.h>
 #include <bits/gpu_reduce.h>
+#include <bits/gpu_transform_reduce.h>
 
-#endif  // __EXECUTION__
+#endif  // __SYCL_EXECUTION__

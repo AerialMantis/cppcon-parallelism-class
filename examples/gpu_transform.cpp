@@ -20,9 +20,9 @@ limitations under the License.
 #include <algorithm>
 
 #include <benchmark.h>
-#include <cppcon_solution>
+#include <sycl_execution>
 
-constexpr int size = 4096 /*4194304*/;
+constexpr int size = 4194304;
 constexpr int iterations = 10;
 
 int pow(int in, int power) {
@@ -44,11 +44,13 @@ TEST_CASE("cppcon::transform(sycl)", "gpu_transform") {
 
     init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
+    cppcon::sycl<transform> syclPolicy;
+
     auto time = eval_performance(
         [&]() {
-          cppcon::transform(cppcon::sycl<transform>, input.begin(), input.end(),
+          cppcon::transform(syclPolicy, input.begin(), input.end(),
                             result.begin(),
-                            [](int in) { return pow(in, 10); });
+                            [](int in) { return pow(in, 100); });
         },
         iterations);
 
@@ -65,7 +67,7 @@ TEST_CASE("cppcon::transform(sycl)", "gpu_transform") {
     auto time = eval_performance(
         [&]() {
           std::transform(input.begin(), input.end(), expected.begin(),
-                         [](int &in) { return pow(in, 10); });
+                         [](int &in) { return pow(in, 100); });
         },
         iterations);
 

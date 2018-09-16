@@ -17,7 +17,7 @@ limitations under the License.
 #ifndef __SEQUENTIAL_TRANSFORM_H__
 #define __SEQUENTIAL_TRANSFORM_H__
 
-#include <bits/policies.h>
+#include <bits/std_policies.h>
 
 namespace cppcon {
 
