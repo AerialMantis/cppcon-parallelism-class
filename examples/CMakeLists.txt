@@ -17,7 +17,7 @@
 function(add_example example)
 	add_executable("${example}" "${example}.cpp")
     target_include_directories("${example}" PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/external/catch2)
-	target_link_libraries("${example}" PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+	target_link_libraries("${example}" PRIVATE Threads::Threads)
     set_target_properties("${example}" PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
     add_test(${example} ${example})
 endfunction()
@@ -25,7 +25,7 @@ endfunction()
 function(add_sycl_example example)
 	add_executable("${example}" "${example}.cpp")
     target_include_directories("${example}" PRIVATE ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/external/catch2)
-	target_link_libraries("${example}" PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+	target_link_libraries("${example}" PRIVATE Threads::Threads)
     set_target_properties("${example}" PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
 
     add_sycl_to_target(
