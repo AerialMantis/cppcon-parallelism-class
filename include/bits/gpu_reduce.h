@@ -54,7 +54,7 @@ T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
     cl::sycl::program prog(q.get_context());
     prog.build_with_kernel_type<KernelName>();
     auto kernel = prog.get_kernel<KernelName>();
-    auto maxWorkGroupSize = kernel.get_work_group_info<
+    auto maxWorkGroupSize = kernel.template get_work_group_info<
         cl::sycl::info::kernel_work_group::work_group_size>(d);
 
     size_t dataSize = std::distance(first, last);
