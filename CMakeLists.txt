@@ -14,7 +14,7 @@
   limitations under the License.
 ]]
 
-cmake_minimum_required (VERSION 3.5.1)
+cmake_minimum_required (VERSION 3.7.2)
 project (cppcon2018-parallelism-class)
 
 # Dependencies
