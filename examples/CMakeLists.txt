@@ -36,7 +36,7 @@ function(add_sycl_example example)
     add_test(${example} ${example})
 endfunction()
 
-add_example(hello_world)
+add_sycl_example(hello_world)
 
 add_example(sequential_transform)
 add_example(sequential_reduce)
