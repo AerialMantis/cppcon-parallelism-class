@@ -17,12 +17,6 @@ limitations under the License.
 #ifndef __PARALLEL_INCLUSIVE_SCAN_H__
 #define __PARALLEL_INCLUSIVE_SCAN_H__
 
-#include <functional>
-#include <iterator>
-#include <thread>
-#include <utility>
-#include <vector>
-
 #include <bits/std_policies.h>
 
 namespace cppcon {
@@ -31,11 +25,10 @@ template <class ForwardIt1, class ForwardIt2, class BinaryOperation, class T>
 ForwardIt2 inclusive_scan(par_execution_policy_t policy, ForwardIt1 first,
                           ForwardIt1 last, ForwardIt2 d_first,
                           BinaryOperation binary_op, T init) {
-  using diff_t = typename std::iterator_traits<ForwardIt1>::difference_type;
-
-  return d_first;
 
   /* implement me */
+
+  return d_first;
 }
 
 }  // namespace cppcon

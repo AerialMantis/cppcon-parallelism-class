@@ -33,41 +33,8 @@ template <class ContiguousIt, class UnaryOperation, typename KernelName>
 ContiguousIt transform(sycl_execution_policy_t<KernelName> policy,
                        ContiguousIt first, ContiguousIt last,
                        ContiguousIt d_first, UnaryOperation unary_op) {
-  using diff_t = typename std::iterator_traits<ContiguousIt>::difference_type;
-  using pointer_t = typename std::iterator_traits<ContiguousIt>::pointer;
-  using value_t = typename std::iterator_traits<ContiguousIt>::value_type;
 
-  if (first == last) return d_first;
-
-  try {
-    auto q = policy.get_queue();
-
-    size_t dataSize = std::distance(first, last);
-
-    auto globalRange = cl::sycl::range<1>(dataSize);
-
-    cl::sycl::buffer<diff_t, 1> inputBuf(first, last);
-    cl::sycl::buffer<value_t, 1> outputBuf(std::addressof(*d_first),
-                                           globalRange);
-    inputBuf.set_final_data(nullptr);
-
-    q.submit([&](cl::sycl::handler& cgh) {
-
-      auto inputAcc =
-          inputBuf.template get_access<cl::sycl::access::mode::read>(cgh);
-      auto outputAcc =
-          outputBuf.template get_access<cl::sycl::access::mode::discard_write>(
-              cgh);
-
-      cgh.parallel_for<KernelName>(globalRange, [=](cl::sycl::id<1> idx) {
-        outputAcc[idx] = unary_op(inputAcc[idx]);
-      });
-    });
-
-    q.wait_and_throw();
-  } catch (cl::sycl::exception e) {
-    std::cout << "SYCL exception caught: " << e.what() << std::endl;
-  }
+  /* implement me */
 
   return d_first;
 }

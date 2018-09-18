@@ -25,10 +25,9 @@ template <class ForwardIt1, class ForwardIt2, class BinaryOperation, class T>
 ForwardIt2 inclusive_scan(seq_execution_policy_t policy, ForwardIt1 first,
                           ForwardIt1 last, ForwardIt2 d_first,
                           BinaryOperation binary_op, T init) {
-  for (; first != last; ++first, (void)++d_first) {
-    init = binary_op(init, *first);
-    *d_first = init;
-  }
+
+  /* implement me */
+
   return d_first;
 }
 

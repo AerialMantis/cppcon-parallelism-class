@@ -25,10 +25,10 @@ template <class ForwardIt, class T, class BinaryOperation, class UnaryOperation>
 T transform_reduce(seq_execution_policy_t policy, ForwardIt first,
                    ForwardIt last, T init, BinaryOperation binary_op,
                    UnaryOperation unary_op) {
-  for (; first != last; ++first) {
-    init = binary_op(init, unary_op(*first));
-  }
-  return init;
+
+  /* implement me */
+
+  return T{};
 }
 
 }  // namespace cppcon

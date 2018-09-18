@@ -24,30 +24,7 @@ limitations under the License.
 namespace cppcon {
 
 template <typename T>
-class sycl_execution_policy_t {
- public:
-  sycl_execution_policy_t()
-      : queue_{cl::sycl::intel_selector{}, [=](cl::sycl::exception_list eL) {
-                 try {
-                   for (auto& e : eL) {
-                     std::rethrow_exception(e);
-                   }
-                 } catch (cl::sycl::exception e) {
-                   std::cout << "SYCL exception caught: " << e.what()
-                             << std::endl;
-                 }
-               }} {
-    std::cout
-        << "SYCL device: "
-        << queue_.get_device().template get_info<cl::sycl::info::device::name>()
-        << std::endl;
-  }
-
-  cl::sycl::queue get_queue() { return queue_; }
-
- private:
-  cl::sycl::queue queue_;
-};
+class sycl_execution_policy_t{};
 
 template <typename T>
 using sycl = sycl_execution_policy_t<T>;

@@ -17,12 +17,6 @@ limitations under the License.
 #ifndef __PARALLEL_REDUCE_H__
 #define __PARALLEL_REDUCE_H__
 
-#include <functional>
-#include <iterator>
-#include <thread>
-#include <utility>
-#include <vector>
-
 #include <bits/std_policies.h>
 
 namespace cppcon {
@@ -30,50 +24,10 @@ namespace cppcon {
 template <class ForwardIt, class T, class BinaryOperation>
 T reduce(par_execution_policy_t policy, ForwardIt first, ForwardIt last, T init,
          BinaryOperation binary_op) {
-  using diff_t = typename std::iterator_traits<ForwardIt>::difference_type;
 
-  if (first == last) return init;
+  /* implement me */
 
-  unsigned int concurrency = std::thread::hardware_concurrency();
-  diff_t numElements = std::distance(first, last);
-  diff_t elementsPerThread = numElements / concurrency;
-  diff_t remainder = numElements % concurrency;
-
-  auto processChunk = [binary_op](ForwardIt c_first, ForwardIt c_last) {
-    T partialReduce{0};
-    while (c_first != c_last) {
-      partialReduce = binary_op(partialReduce, *c_first++);
-    }
-    return partialReduce;
-  };
-
-  std::vector<std::thread> threads(0);
-  threads.reserve(concurrency - 1);
-  std::vector<T> partialReductions(8);
-  for (unsigned t = 1; t < concurrency; t++) {
-    diff_t currentChunkSize =
-        elementsPerThread + static_cast<diff_t>(t < remainder);
-    diff_t currentOffset =
-        (t * elementsPerThread) + std::min(static_cast<diff_t>(t), remainder);
-    threads.emplace_back([
-      t, processChunk = std::move(processChunk),
-      currentChunkSize = std::move(currentChunkSize),
-      c_first = std::next(first, currentOffset),
-      c_last = std::next(first, currentOffset + currentChunkSize),
-      &partialReductions
-    ]() mutable { partialReductions[t] = processChunk(c_first, c_last); });
-  }
-  diff_t currentChunkSize =
-      elementsPerThread + static_cast<diff_t>(0 < remainder);
-  partialReductions[0] =
-      processChunk(first, std::next(first, currentChunkSize));
-
-  for (auto &thread : threads) {
-    thread.join();
-  }
-
-  return binary_op(
-      init, processChunk(partialReductions.begin(), partialReductions.end()));
+  return T{};
 }
 
 }  // namespace cppcon

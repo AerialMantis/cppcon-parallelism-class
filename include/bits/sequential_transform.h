@@ -25,9 +25,9 @@ template <class ForwardIt1, class ForwardIt2, class UnaryOperation>
 ForwardIt2 transform(seq_execution_policy_t policy, ForwardIt1 first,
                      ForwardIt1 last, ForwardIt2 d_first,
                      UnaryOperation unary_op) {
-  while (first != last) {
-    *d_first++ = unary_op(*first++);
-  }
+
+  /* implement me */
+
   return d_first;
 }
 

@@ -24,10 +24,10 @@ namespace cppcon {
 template <class ForwardIt, class T, class BinaryOperation>
 T reduce(seq_execution_policy_t policy, ForwardIt first, ForwardIt last,
          T init, BinaryOperation binary_op) {
-  for (; first != last; ++first) {
-    init = binary_op(init, *first);
-  }
-  return init;
+
+  /* implement me */
+
+  return T{};
 }
 
 }  // namespace cppcon
