@@ -10,7 +10,7 @@ Some later exercises, those which involve programming for the GPU will have some
 
 ## Instructions
 
-### installing OpenCL drivers:
+### Installing OpenCL drivers:
 
 * You will need the OpenCL drivers for your GPU:
 
