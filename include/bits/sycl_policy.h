@@ -33,8 +33,7 @@ class sycl_execution_policy_t {
                      std::rethrow_exception(e);
                    }
                  } catch (cl::sycl::exception e) {
-                   std::cout << "SYCL exception caught: " << e.what()
-                             << std::endl;
+                   std::cout << "SYCL exception caught: " << e.what() << "\n\n";
                  }
                }} {
     std::cout

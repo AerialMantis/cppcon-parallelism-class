@@ -60,9 +60,10 @@ T transform_reduce(sycl_execution_policy_t<KernelName> policy,
     cl::sycl::buffer<value_t, 1> inputBuf(first, last);
     inputBuf.set_final_data(nullptr);
 
+    bool doTransform = true;
+
     do {
       q.submit([&](cl::sycl::handler& cgh) {
-
         auto inputAcc =
             inputBuf.template get_access<cl::sycl::access::mode::read_write>(
                 cgh);
@@ -76,7 +77,11 @@ T transform_reduce(sycl_execution_policy_t<KernelName> policy,
           size_t localId = ndItem.get_local_id(0);
           size_t groupId = ndItem.get_group(0);
 
-          scratchPad[localId] = inputAcc[globalId];
+          if (doTransform) {
+            scratchPad[localId] = unary_op(inputAcc[globalId]);
+          } else {
+            scratchPad[localId] = inputAcc[globalId];
+          }
 
           ndItem.barrier(cl::sycl::access::fence_space::local_space);
 
@@ -96,6 +101,7 @@ T transform_reduce(sycl_execution_policy_t<KernelName> policy,
         });
       });
       dataSize = dataSize / maxWorkGroupSize;
+      doTransform = false;
     } while (dataSize > 1);
 
     {

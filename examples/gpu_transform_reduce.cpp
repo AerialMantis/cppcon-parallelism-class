@@ -18,9 +18,10 @@ limitations under the License.
 #include <catch.hpp>
 
 #include <benchmark.h>
+#include <utils.h>
 #include <sycl_execution>
 
-constexpr int size = 2097152;
+constexpr int size = 4194304;
 constexpr int iterations = 10;
 
 class transform_reduce;
@@ -36,17 +37,13 @@ TEST_CASE("cppcon::transform_reduce(par)", "gpu_transform_reduce") {
 
     cppcon::sycl<transform_reduce> syclPolicy;
 
-    auto cppconTime = eval_performance(
+    auto time = eval_performance(
         [&]() {
           result = cppcon::transform_reduce(syclPolicy, input.begin(),
                                             input.end(), 42, std::plus<>(),
-                                            [](int &in) { return in * 2; });
+                                            cppcon::pow<int>{100});
         },
-        iterations);
-
-    print_time<std::milli>("cppcon::transform_reduce(sycl) (" +
-                               std::to_string(iterations) + " iterations)",
-                           cppconTime);
+        iterations, "cppcon::transform_reduce(sycl)");
   }
 
   {
@@ -58,15 +55,11 @@ TEST_CASE("cppcon::transform_reduce(par)", "gpu_transform_reduce") {
     auto time = eval_performance(
         [&]() {
           std::transform(input.begin(), input.end(), temp.begin(),
-                         [](int &in) { return in * 2; });
+                         cppcon::pow<int>{100});
 
           expected = std::accumulate(temp.begin(), temp.end(), 42);
         },
-        iterations);
-
-    print_time<std::milli>("std::transform & std::accumulate (" +
-                               std::to_string(iterations) + " iterations)",
-                           time);
+        iterations, "std::transform & std::accumulate");
   }
 
   REQUIRE(result == expected);

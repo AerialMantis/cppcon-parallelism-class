@@ -69,7 +69,10 @@ void init_data(std::vector<ValueType> &vec, InitFunc initFunc) {
 }
 
 template <typename Func>
-auto eval_performance(Func &&func, int iterations) {
+auto eval_performance(Func &&func, int iterations, std::string caption) {
+  std::cout << caption << " (" << iterations << " iterations) \n";
+  unsigned completion = 0;
+  std::cout << "[";
   std::chrono::duration<double, std::milli> totalTime{0};
   for (int i = 0; i < iterations; i++) {
     std::chrono::system_clock::time_point start =
@@ -78,8 +81,20 @@ auto eval_performance(Func &&func, int iterations) {
     std::chrono::system_clock::time_point end =
         std::chrono::system_clock::now();
     totalTime += (end - start);
+    unsigned progress =
+        static_cast<unsigned>((((i + 1) * 78) / iterations)) - completion;
+    for (int c = 0; c < progress; c++) {
+      std::cout << "-";
+    }
+    completion += progress;
   }
-  return totalTime / iterations;
+  std::cout << "]\n";
+  auto averageTime = totalTime / iterations;
+
+  std::cout << ": " << averageTime.count()
+            << unit_extension_v<std::milli> << "\n\n";
+
+  return averageTime;
 }
 
 void print(const std::vector<int> &vec, std::string tag) {

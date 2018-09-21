@@ -46,11 +46,13 @@ TEST_CASE("cppcon::transform(sycl)", "gpu_transform") {
 
     cppcon::sycl<transform> syclPolicy;
 
+    // TODO Merge eval_performance & print_time
+
     auto time = eval_performance(
         [&]() {
           cppcon::transform(syclPolicy, input.begin(), input.end(),
                             result.begin(),
-                            [](int in) { return pow(in, 100); });
+                            [](int in) { return cppcon::pow(in, 100); });
         },
         iterations);
 
