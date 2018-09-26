@@ -41,12 +41,10 @@ add_sycl_example(hello_world)
 add_example(sequential_transform)
 add_example(sequential_reduce)
 add_example(sequential_transform_reduce)
-add_example(sequential_inclusive_scan)
 
 add_example(parallel_transform)
 add_example(parallel_reduce)
 add_example(parallel_transform_reduce)
-add_example(parallel_inclusive_scan)
 
 add_sycl_example(gpu_transform)
 add_sycl_example(gpu_reduce)
