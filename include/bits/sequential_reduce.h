@@ -22,11 +22,16 @@ limitations under the License.
 namespace cppcon {
 
 template <class ForwardIt, class T, class BinaryOperation>
-T reduce(seq_execution_policy_t policy, ForwardIt first, ForwardIt last,
-         T init, BinaryOperation binary_op) {
+T reduce(seq_execution_policy_t policy, ForwardIt first, ForwardIt last, T init,
+         BinaryOperation binary_op) {
+  /* Iterate over the input range */
   for (; first != last; ++first) {
+    /* Read the value of the input iterator, pass it to the binary operator
+     * along with init and write the result to init */
     init = binary_op(init, *first);
   }
+
+  /* Return the reduced value */
   return init;
 }
 

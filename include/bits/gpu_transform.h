@@ -34,7 +34,7 @@ ContiguousIt transform(sycl_execution_policy_t<KernelName> policy,
                        ContiguousIt d_first, UnaryOperation unary_op) {
   using value_t = typename std::iterator_traits<ContiguousIt>::value_type;
 
-  /* If the input range is empty then return the initial value */
+  /* If the input range is empty then return the output iterator */
   if (first == last) return d_first;
 
   /* Wrap all SYCL API calls with a try-catch block to ensure you handle

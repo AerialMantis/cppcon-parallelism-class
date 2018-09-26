@@ -32,46 +32,73 @@ T reduce(par_execution_policy_t policy, ForwardIt first, ForwardIt last, T init,
          BinaryOperation binary_op) {
   using diff_t = typename std::iterator_traits<ForwardIt>::difference_type;
 
+  /* If the input range is empty then return the output iterator */
   if (first == last) return init;
 
+  /* Retrieve the hardware concurrency of you system */
   unsigned int concurrency = std::thread::hardware_concurrency();
-  diff_t numElements = std::distance(first, last);
-  diff_t elementsPerThread = numElements / concurrency;
-  diff_t remainder = numElements % concurrency;
 
-  auto processChunk = [binary_op](ForwardIt c_first, ForwardIt c_last) {
+  /* Calculate the data size, the base chunk size and the remainder */
+  diff_t dataSize = std::distance(first, last);
+  diff_t baseChunkSize = dataSize / concurrency;
+  diff_t remainder = dataSize % concurrency;
+
+  /* Create a lambda function for processing a chunk */
+  auto processChunk = [=](ForwardIt first, ForwardIt last) {
     T partialReduce{0};
-    while (c_first != c_last) {
-      partialReduce = binary_op(partialReduce, *c_first++);
+    /* Iterate over the input range */
+    for (; first != last; ++first) {
+      /* Read the value of the input iterator, pass it to the binary operator
+       * along with init and write the result to init */
+      partialReduce = binary_op(partialReduce, *first);
     }
     return partialReduce;
   };
 
+  /* Reserve a vector of threads for concurrency - 1 */
   std::vector<std::thread> threads(0);
   threads.reserve(concurrency - 1);
-  std::vector<T> partialReductions(8);
-  for (unsigned t = 1; t < concurrency; t++) {
-    diff_t currentChunkSize =
-        elementsPerThread + static_cast<diff_t>(t < remainder);
-    diff_t currentOffset =
-        (t * elementsPerThread) + std::min(static_cast<diff_t>(t), remainder);
-    threads.emplace_back([
-      t, processChunk = std::move(processChunk),
-      currentChunkSize = std::move(currentChunkSize),
-      c_first = std::next(first, currentOffset),
-      c_last = std::next(first, currentOffset + currentChunkSize),
-      &partialReductions
-    ]() mutable { partialReductions[t] = processChunk(c_first, c_last); });
-  }
-  diff_t currentChunkSize =
-      elementsPerThread + static_cast<diff_t>(0 < remainder);
-  partialReductions[0] =
-      processChunk(first, std::next(first, currentChunkSize));
 
+  /* Create a vector of partial reduction values */
+  std::vector<T> partialReductions(8);
+
+  /* Loop over the hardware concurrency, starting at 1 */
+  for (unsigned t = 1; t < concurrency; t++) {
+    /* Calcualte the current chunk size as the base chunk size plus a potential
+     * remaider */
+    diff_t currentChunkSize =
+        baseChunkSize + static_cast<diff_t>(t < remainder);
+
+    /* Calculate the offset to the current chunk */
+    diff_t currentOffset =
+        (t * baseChunkSize) + std::min(static_cast<diff_t>(t), remainder);
+
+    /* Create iterators to the beggining and end of the current chunk */
+    auto chunkFirst = std::next(first, currentOffset);
+    auto chunkLast = std::next(first, currentOffset + currentChunkSize);
+
+    /* Launch a std::thread that will process a chunk with the iterators created
+     * above*/
+    threads.emplace_back([=, &partialReductions]() mutable {
+      partialReductions[t] = processChunk(chunkFirst, chunkLast);
+    });
+  }
+
+  /* Calculate the chunk size for the chunk that will execute on the calling
+   * thread and create an iterator to the end of that chunk */
+  diff_t currentChunkSize = baseChunkSize + static_cast<diff_t>(0 < remainder);
+  auto chunkLast = std::next(first, currentChunkSize);
+
+  /* Process the chunk of the calling thread  */
+  partialReductions[0] = processChunk(first, chunkLast);
+
+  /* Join all of the threads you created */
   for (auto &thread : threads) {
     thread.join();
   }
 
+  /* Process all of the partial reducations as another chunk, pass the result
+   * and the initial value to the binary operator and return the result */
   return binary_op(
       init, processChunk(partialReductions.begin(), partialReductions.end()));
 }
