@@ -30,34 +30,29 @@ TEST_CASE("cppcon::transform(seq)", "sequential_transform") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input,
+                      [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = benchmark(
+    cppcon::benchmark(
         [&]() {
           cppcon::transform(cppcon::seq, input.begin(), input.end(),
                             result.begin(), [](int &in) { return in * 2; });
         },
-        iterations);
-
-    print_time<std::milli>("cppcon::transform(seq) (" +
-                               std::to_string(iterations) + " iterations)",
-                           time);
+        iterations, "cppcon::transform(seq)");
   }
 
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input,
+                      [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = benchmark(
+    cppcon::benchmark(
         [&]() {
           std::transform(input.begin(), input.end(), expected.begin(),
                          [](int &in) { return in * 2; });
         },
-        iterations);
-
-    print_time<std::milli>(
-        "std::transform (" + std::to_string(iterations) + " iterations)", time);
+        iterations, "std::transform");
   }
 
   for (int i = 0; i < size; i++) {

@@ -85,7 +85,7 @@ auto benchmark(Func &&func, int iterations, std::string caption) {
     totalTime += (end - start);
     unsigned progress =
         static_cast<unsigned>((((i + 1) * 78) / iterations)) - completion;
-    for (int c = 0; c < progress; c++) {
+    for (unsigned c = 0; c < progress; c++) {
       std::cout << "-";
     }
     completion += progress;
