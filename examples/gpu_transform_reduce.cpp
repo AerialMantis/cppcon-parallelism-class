@@ -33,11 +33,11 @@ TEST_CASE("cppcon::transform_reduce(par)", "gpu_transform_reduce") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     cppcon::sycl<transform_reduce> syclPolicy;
 
-    auto time = eval_performance(
+    cppcon::benchmark(
         [&]() {
           result = cppcon::transform_reduce(syclPolicy, input.begin(),
                                             input.end(), 42, std::plus<>(),
@@ -50,9 +50,9 @@ TEST_CASE("cppcon::transform_reduce(par)", "gpu_transform_reduce") {
     auto input = std::vector<int>(size);
     auto temp = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    cppcon::benchmark(
         [&]() {
           std::transform(input.begin(), input.end(), temp.begin(),
                          cppcon::pow<int>{100});

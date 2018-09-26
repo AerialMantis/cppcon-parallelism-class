@@ -32,34 +32,26 @@ TEST_CASE("cppcon::reduce(sycl)", "gpu_reduce") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     cppcon::sycl<reduce> syclPolicy;
 
-    auto cppconTime = eval_performance(
+    cppcon::benchmark(
         [&]() {
           result = cppcon::reduce(syclPolicy, input.begin(), input.end(), 42,
                                   std::plus<>());
         },
-        iterations);
-
-    print_time<std::milli>(
-        "cppcon::reduce(sycl) (" + std::to_string(iterations) + " iterations)",
-        cppconTime);
+        iterations, "cppcon::reduce(sycl)");
   }
 
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    cppcon::benchmark(
         [&]() { expected = std::accumulate(input.begin(), input.end(), 42); },
-        iterations);
-
-    print_time<std::milli>(
-        "std::accumulate (" + std::to_string(iterations) + " iterations)",
-        time);
+        iterations, "td::accumulate");
   }
 
   REQUIRE(result == expected);

@@ -33,23 +33,15 @@ template <class ContiguousIt, class T, class BinaryOperation,
           typename KernelName>
 T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
          ContiguousIt last, T init, BinaryOperation binary_op) {
-  using diff_t = typename std::iterator_traits<ContiguousIt>::difference_type;
   using value_t = typename std::iterator_traits<ContiguousIt>::value_type;
 
   if (first == last) return init;
 
-  T result;
+  T result{};
 
   try {
     auto q = policy.get_queue();
     auto d = q.get_device();
-
-    /*
-    auto maxWorkGroupSize =
-        d.template get_info<cl::sycl::info::device::max_work_group_size>();
-    auto maxDims =
-        d.template get_info<cl::sycl::info::device::max_work_group_size>();
-    */
 
     cl::sycl::program prog(q.get_context());
     prog.build_with_kernel_type<KernelName>();
@@ -59,15 +51,16 @@ T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
 
     size_t dataSize = std::distance(first, last);
 
-    auto globalRange = cl::sycl::range<1>(std::max(dataSize, maxWorkGroupSize));
-    auto localRange = cl::sycl::range<1>(std::min(dataSize, maxWorkGroupSize));
-    auto ndRange = cl::sycl::nd_range<1>(globalRange, localRange);
-
     cl::sycl::buffer<value_t, 1> inputBuf(first, last);
     inputBuf.set_final_data(nullptr);
 
     do {
       q.submit([&](cl::sycl::handler& cgh) {
+        auto globalRange =
+            cl::sycl::range<1>(std::max(dataSize, maxWorkGroupSize));
+        auto localRange =
+            cl::sycl::range<1>(std::min(dataSize, maxWorkGroupSize));
+        auto ndRange = cl::sycl::nd_range<1>(globalRange, localRange);
 
         auto inputAcc =
             inputBuf.template get_access<cl::sycl::access::mode::read_write>(
@@ -86,10 +79,7 @@ T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
 
           ndItem.barrier(cl::sycl::access::fence_space::local_space);
 
-          // if (globalId < dataSize) {
-          // auto min = cl::sycl::min(dataSize, maxWorkGroupSize);
-          int min = (dataSize < maxWorkGroupSize) ? dataSize : maxWorkGroupSize;
-          for (size_t offset = min / 2; offset > 0; offset /= 2) {
+          for (size_t offset = localRange[0] / 2; offset > 0; offset /= 2) {
             if (localId < offset) {
               scratchPad[localId] =
                   binary_op(scratchPad[localId], scratchPad[localId + offset]);
@@ -101,7 +91,6 @@ T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
           if (localId == 0) {
             inputAcc[groupId] = scratchPad[localId];
           }
-          // }
         });
       });
       dataSize = dataSize / maxWorkGroupSize;
@@ -118,7 +107,7 @@ T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
     std::cout << "SYCL exception caught: " << e.what() << std::endl;
   }
 
-  return result + init;
+  return binary_op(init, result);
 }
 
 }  // namespace cppcon

@@ -23,7 +23,7 @@ limitations under the License.
 #include <utils.h>
 #include <std_execution>
 
-constexpr int size = 4194304;
+constexpr int size = 2097152;
 constexpr int iterations = 10;
 
 TEST_CASE("cppcon::transform(par)", "parallel_transform") {
@@ -33,12 +33,13 @@ TEST_CASE("cppcon::transform(par)", "parallel_transform") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input,
+                      [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    cppcon::benchmark(
         [&]() {
           cppcon::transform(cppcon::par, input.begin(), input.end(),
-                            result.begin(), cppcon::pow<int>{10});
+                            result.begin(), cppcon::pow<int>{100});
         },
         iterations, "cppcon::transform(par)");
   }
@@ -46,12 +47,13 @@ TEST_CASE("cppcon::transform(par)", "parallel_transform") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input,
+                      [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    cppcon::benchmark(
         [&]() {
           std::transform(input.begin(), input.end(), expected.begin(),
-                         cppcon::pow<int>{10});
+                         cppcon::pow<int>{100});
         },
         iterations, "std::transform");
   }

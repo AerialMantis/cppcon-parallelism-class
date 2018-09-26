@@ -23,6 +23,8 @@ limitations under the License.
 #include <string>
 #include <vector>
 
+namespace cppcon {
+
 template <typename Unit>
 struct unit_extension;
 
@@ -69,7 +71,7 @@ void init_data(std::vector<ValueType> &vec, InitFunc initFunc) {
 }
 
 template <typename Func>
-auto eval_performance(Func &&func, int iterations, std::string caption) {
+auto benchmark(Func &&func, int iterations, std::string caption) {
   std::cout << caption << " (" << iterations << " iterations) \n";
   unsigned completion = 0;
   std::cout << "[";
@@ -104,5 +106,7 @@ void print(const std::vector<int> &vec, std::string tag) {
   }
   std::cout << "\n";
 }
+
+}  // namespace cppcon
 
 #endif  // __BENCHMARK_H__

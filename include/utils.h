@@ -20,15 +20,25 @@ limitations under the License.
 namespace cppcon {
 
 template <typename ValueType>
+class pass {
+ public:
+  pass() {}
+
+  ValueType operator()(ValueType v) const {
+    return v;
+  }
+};
+
+template <typename ValueType>
 class pow {
  public:
   pow(int power) : power_{power} {}
 
-  ValueType operator()(ValueType &v) const {
+  ValueType operator()(ValueType v) const {
     for (int i = 0; i < power_; i++) {
       v *= v;
     }
-    return v;
+    return power_;
   }
 
  private:

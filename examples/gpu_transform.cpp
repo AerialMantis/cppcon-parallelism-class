@@ -20,18 +20,11 @@ limitations under the License.
 #include <algorithm>
 
 #include <benchmark.h>
+#include <utils.h>
 #include <sycl_execution>
 
 constexpr int size = 4194304;
 constexpr int iterations = 10;
-
-int pow(int in, int power) {
-  for (int i = 1; i < power; i++) {
-    in *= i;
-  }
-
-  return in;
-}
 
 class transform;
 
@@ -42,39 +35,29 @@ TEST_CASE("cppcon::transform(sycl)", "gpu_transform") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
     cppcon::sycl<transform> syclPolicy;
 
-    // TODO Merge eval_performance & print_time
-
-    auto time = eval_performance(
+    cppcon::benchmark(
         [&]() {
           cppcon::transform(syclPolicy, input.begin(), input.end(),
-                            result.begin(),
-                            [](int in) { return cppcon::pow(in, 100); });
+                            result.begin(), cppcon::pow<int>{100});
         },
-        iterations);
-
-    print_time<std::milli>("cppcon::transform(sycl) (" +
-                               std::to_string(iterations) + " iterations)",
-                           time);
+        iterations, "cppcon::transform(sycl)");
   }
 
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    cppcon::benchmark(
         [&]() {
           std::transform(input.begin(), input.end(), expected.begin(),
-                         [](int &in) { return pow(in, 100); });
+                         cppcon::pow<int>{100});
         },
-        iterations);
-
-    print_time<std::milli>(
-        "std::transform (" + std::to_string(iterations) + " iterations)", time);
+        iterations, "std::transform");
   }
 
   for (int i = 0; i < size; i++) {

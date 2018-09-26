@@ -20,7 +20,7 @@ limitations under the License.
 #include <benchmark.h>
 #include <std_execution>
 
-constexpr int size = 4194304;
+constexpr int size = 2097152;
 constexpr int iterations = 10;
 
 TEST_CASE("cppcon::transform(seq)", "sequential_transform") {
@@ -32,7 +32,7 @@ TEST_CASE("cppcon::transform(seq)", "sequential_transform") {
 
     init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    auto time = benchmark(
         [&]() {
           cppcon::transform(cppcon::seq, input.begin(), input.end(),
                             result.begin(), [](int &in) { return in * 2; });
@@ -49,7 +49,7 @@ TEST_CASE("cppcon::transform(seq)", "sequential_transform") {
 
     init_data(input, [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    auto time = benchmark(
         [&]() {
           std::transform(input.begin(), input.end(), expected.begin(),
                          [](int &in) { return in * 2; });

@@ -30,33 +30,27 @@ TEST_CASE("cppcon::reduce(seq)", "sequential_reduce") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input,
+                      [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    cppcon::benchmark(
         [&]() {
           result = cppcon::reduce(cppcon::seq, input.begin(), input.end(), 42,
                                   std::plus<>());
         },
-        iterations);
-
-    print_time<std::milli>(
-        "cppcon::reduce(seq) (" + std::to_string(iterations) + " iterations)",
-        time);
+        iterations, "cppcon::reduce(seq)");
   }
 
   {
     auto input = std::vector<int>(size);
     int output = 0;
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input,
+                      [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    cppcon::benchmark(
         [&]() { expected = std::accumulate(input.begin(), input.end(), 42); },
-        iterations);
-
-    print_time<std::milli>(
-        "std::accumulate (" + std::to_string(iterations) + " iterations)",
-        time);
+        iterations, "std::accumulate");
   }
 
   REQUIRE(result == expected);
