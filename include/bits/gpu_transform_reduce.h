@@ -23,9 +23,8 @@ limitations under the License.
 #include <utility>
 #include <vector>
 
-#include <CL/sycl.hpp>
-
 #include <bits/sycl_policy.h>
+#include <CL/sycl.hpp>
 
 namespace cppcon {
 
@@ -63,9 +62,14 @@ T transform_reduce(sycl_execution_policy_t<KernelName> policy,
      * operation */
     int numTransforms = 1;
 
+    /* Loop over the same SYCL kernel until it yeilds a single reduction value
+     */
     do {
+      /* Submit a command group to the queue */
       q.submit([&](cl::sycl::handler& cgh) {
-        /* Construct the nd-range that the SYCL kernel will execute over */
+        /* Construct the nd-range that the SYCL kernel will execute over, where
+         * the global range is the data size and the local range is the minimum
+         * of the data size and work-group size */
         auto globalRange =
             cl::sycl::range<1>(std::max(dataSize, workGroupSize));
         auto localRange = cl::sycl::range<1>(std::min(dataSize, workGroupSize));
