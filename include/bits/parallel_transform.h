@@ -75,8 +75,7 @@ OutputIt transform(par_execution_policy_t policy, ForwardIt first,
 
     /* Launch a std::thread that will process a chunk with the iterators created
      * above*/
-    threads.emplace_back(
-        [=]() mutable { processChunk(chunkFirst, chunkDFirst, chunkLast); });
+    threads.emplace_back(processChunk, chunkFirst, chunkDFirst, chunkLast);
   }
 
   /* Calculate the chunk size for the chunk that will execute on the calling
