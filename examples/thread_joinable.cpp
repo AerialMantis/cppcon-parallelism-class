@@ -14,17 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <chrono>
 #include <iostream>
 #include <thread>
-void hello() {
-  std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-  std::cout << "hello from method \n";
-}
+
+void hello() { std::cout << "hello from method \n"; }
 
 int main() {
   std::thread thread_1(hello);
+
+  if (thread_1.joinable()) std::cout << "this is joinable thread \n";
+
   thread_1.join();
+
+  if (thread_1.joinable()) {
+    std::cout << "this is joinable thread \n";
+  } else {
+    std::cout << "After calling join, this is not a joinable thread \n";
+  }
+
   std::cout << "hello from main \n";
+
   return 0;
 }

@@ -17,6 +17,7 @@ limitations under the License.
 #include <chrono>
 #include <iostream>
 #include <thread>
+
 void hello() {
   std::this_thread::sleep_for(std::chrono::milliseconds(5000));
   std::cout << "hello from method \n";
@@ -24,7 +25,7 @@ void hello() {
 
 int main() {
   std::thread thread_1(hello);
-  thread_1.join();
+  thread_1.detach();
   std::cout << "hello from main \n";
   return 0;
 }

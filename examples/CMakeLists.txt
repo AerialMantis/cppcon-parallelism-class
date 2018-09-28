@@ -36,7 +36,9 @@ function(add_sycl_example example)
     add_test(${example} ${example})
 endfunction()
 
+add_example(thread_joinable)
 add_example(thread_join)
+add_example(thread_detach)
 
 add_sycl_example(hello_world)
 
