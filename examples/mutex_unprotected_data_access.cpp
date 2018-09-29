@@ -35,11 +35,11 @@ class data_wrapper {
 };
 data_object* unprotected_data;
 
-void malicious_function(data_object& data) { unprotected_data = &data; }
+void bad_function(data_object& data) { unprotected_data = &data; }
 
 int main() {
   data_wrapper wrapper;
-  wrapper.do_some_work(malicious_function);
+  wrapper.do_some_work(bad_function);
 
   return 0;
 }
