@@ -54,8 +54,8 @@ class bank_account {
 
 int main() {
   bank_account account;
-  bank_account account_1(1000, "james");
-  bank_account account_2(2000, "Mathew");
+  bank_account account_1(1000, "Gordon");
+  bank_account account_2(2000, "Michael");
   std::thread thread_1(&bank_account::transfer, &account, std::ref(account_1),
                        std::ref(account_2), 500);
   std::thread thread_2(&bank_account::transfer, &account, std::ref(account_2),

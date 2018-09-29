@@ -35,7 +35,7 @@ class bank_account {
     std::lock_guard<std::mutex> lg(m);
     balance += amount;
   }
-  void deposite(double amount) {
+  void deposit(double amount) {
     std::lock_guard<std::mutex> lg(m);
     balance += amount;
   }
