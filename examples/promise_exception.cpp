@@ -18,6 +18,7 @@ limitations under the License.
 #include <iostream>
 #include <stdexcept>
 #include <thread>
+#include <cmath>
 
 void throw_exception() {
   throw std::invalid_argument("input cannot be negative");
