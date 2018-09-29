@@ -1,5 +1,5 @@
 /*
-Copyright 2018 Gordon Brown
+Copyright 2018 Michael Wong
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,24 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifndef __GPU_REDUCE_H__
-#define __GPU_REDUCE_H__
+#include <chrono>
+#include <iostream>
+#include <thread>
 
-#include <bits/sycl_policy.h>
-#include <CL/sycl.hpp>
-
-namespace cppcon {
-
-template <class ContiguousIt, class T, class BinaryOperation,
-          typename KernelName>
-T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
-         ContiguousIt last, T init, BinaryOperation binary_op) {
-
-  /* implement me */
-
-  return T{};
+void hello() {
+  std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+  std::cout << "hello from method \n";
 }
 
-}  // namespace cppcon
-
-#endif  // __GPU_REDUCE_H__
+int main() {
+  std::thread thread_1(hello);
+  thread_1.detach();
+  std::cout << "hello from main \n";
+  return 0;
+}

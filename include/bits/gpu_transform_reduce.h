@@ -17,9 +17,8 @@ limitations under the License.
 #ifndef __GPU_TRANSFORM_REDUCE_H__
 #define __GPU_TRANSFORM_REDUCE_H__
 
-#include <CL/sycl.hpp>
-
 #include <bits/sycl_policy.h>
+#include <CL/sycl.hpp>
 
 namespace cppcon {
 

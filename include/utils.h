@@ -14,23 +14,37 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifndef __SEQUENTIAL_INCLUSIVE_SCAN_H__
-#define __SEQUENTIAL_INCLUSIVE_SCAN_H__
-
-#include <bits/std_policies.h>
+#ifndef __UTILS_H__
+#define __UTILS_H__
 
 namespace cppcon {
 
-template <class ForwardIt1, class ForwardIt2, class BinaryOperation, class T>
-ForwardIt2 inclusive_scan(seq_execution_policy_t policy, ForwardIt1 first,
-                          ForwardIt1 last, ForwardIt2 d_first,
-                          BinaryOperation binary_op, T init) {
+template <typename ValueType>
+class pass {
+ public:
+  pass() {}
 
-  /* implement me */
+  ValueType operator()(ValueType v) const {
+    return v;
+  }
+};
 
-  return d_first;
-}
+template <typename ValueType>
+class pow {
+ public:
+  pow(int power) : power_{power} {}
+
+  ValueType operator()(ValueType v) const {
+    for (int i = 0; i < power_; i++) {
+      v *= v;
+    }
+    return power_;
+  }
+
+ private:
+  int power_;
+};
 
 }  // namespace cppcon
 
-#endif  // __SEQUENTIAL_INCLUSIVE_SCAN_H__
+#endif  // __UTILS_H__

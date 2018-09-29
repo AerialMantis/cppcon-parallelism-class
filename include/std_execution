@@ -20,10 +20,8 @@ limitations under the License.
 #include <bits/sequential_transform.h>
 #include <bits/sequential_reduce.h>
 #include <bits/sequential_transform_reduce.h>
-#include <bits/sequential_inclusive_scan.h>
 #include <bits/parallel_transform.h>
 #include <bits/parallel_reduce.h>
 #include <bits/parallel_transform_reduce.h>
-#include <bits/parallel_inclusive_scan.h>
 
 #endif  // __STD_EXECUTION__

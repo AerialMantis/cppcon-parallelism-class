@@ -17,15 +17,8 @@ limitations under the License.
 #ifndef __GPU_TRANSFORM_H__
 #define __GPU_TRANSFORM_H__
 
-#include <functional>
-#include <iterator>
-#include <thread>
-#include <utility>
-#include <vector>
-
-#include <CL/sycl.hpp>
-
 #include <bits/sycl_policy.h>
+#include <CL/sycl.hpp>
 
 namespace cppcon {
 

@@ -20,19 +20,11 @@ limitations under the License.
 #include <algorithm>
 
 #include <benchmark.h>
+#include <utils.h>
 #include <std_execution>
 
-constexpr int size = 4194304;
+constexpr int size = 2097152;
 constexpr int iterations = 10;
-
-int pow(int in, int power) {
-  int res = 0;
-  for (int i = 0; i < power; i++) {
-    res *= in;
-  }
-
-  return res;
-}
 
 TEST_CASE("cppcon::transform(par)", "parallel_transform") {
   std::vector<int> result(size);
@@ -41,35 +33,29 @@ TEST_CASE("cppcon::transform(par)", "parallel_transform") {
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input,
+                      [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    cppcon::benchmark(
         [&]() {
           cppcon::transform(cppcon::par, input.begin(), input.end(),
-                            result.begin(),
-                            [](int &in) { return pow(in, 100); });
+                            result.begin(), cppcon::pow<int>{100});
         },
-        iterations);
-
-    print_time<std::milli>("cppcon::transform(par) (" +
-                               std::to_string(iterations) + " iterations)",
-                           time);
+        iterations, "cppcon::transform(par)");
   }
 
   {
     auto input = std::vector<int>(size);
 
-    init_data(input, [](int &value, unsigned index) { value = index % 16; });
+    cppcon::init_data(input,
+                      [](int &value, unsigned index) { value = index % 16; });
 
-    auto time = eval_performance(
+    cppcon::benchmark(
         [&]() {
           std::transform(input.begin(), input.end(), expected.begin(),
-                         [](int &in) { return pow(in, 100); });
+                         cppcon::pow<int>{100});
         },
-        iterations);
-
-    print_time<std::milli>(
-        "std::transform (" + std::to_string(iterations) + " iterations)", time);
+        iterations, "std::transform");
   }
 
   for (int i = 0; i < size; i++) {

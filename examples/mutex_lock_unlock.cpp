@@ -1,5 +1,5 @@
 /*
-Copyright 2018 Gordon Brown
+Copyright 2018 Michael Wong
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,24 +14,34 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifndef __GPU_REDUCE_H__
-#define __GPU_REDUCE_H__
+#include <iostream>
+#include <list>
+#include <mutex>
+#include <thread>
 
-#include <bits/sycl_policy.h>
-#include <CL/sycl.hpp>
+std::list<int> my_list;
+std::mutex m;
 
-namespace cppcon {
-
-template <class ContiguousIt, class T, class BinaryOperation,
-          typename KernelName>
-T reduce(sycl_execution_policy_t<KernelName> policy, ContiguousIt first,
-         ContiguousIt last, T init, BinaryOperation binary_op) {
-
-  /* implement me */
-
-  return T{};
+void add_to_list(int const& x) {
+  m.lock();
+  my_list.push_front(x);
+  m.unlock();
 }
 
-}  // namespace cppcon
+void size() {
+  m.lock();
+  int size = my_list.size();
+  m.unlock();
+  std::cout << "size of the list is : " << size << std::endl;
+}
 
-#endif  // __GPU_REDUCE_H__
+int main() {
+  size();
+  std::thread thread_1(add_to_list, 4);
+  size();
+  std::thread thread_2(add_to_list, 11);
+  size();
+  thread_1.join();
+  thread_2.join();
+  return 0;
+}
