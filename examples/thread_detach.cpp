@@ -19,8 +19,7 @@ limitations under the License.
 #include <thread>
 
 void hello() {
-  std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-  std::cout << "hello from method \n";
+    std::cout << "hello from method \n";
 }
 
 int main() {
