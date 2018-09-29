@@ -21,9 +21,9 @@ limitations under the License.
 
 namespace cppcon {
 
-template <class ForwardIt, class OutputIt, class UnaryOperation>
-OutputIt transform(par_execution_policy_t policy, ForwardIt first,
-                   ForwardIt last, OutputIt d_first, UnaryOperation unary_op) {
+template <class ForwardIt1, class ForwardIt2, class UnaryOperation>
+ForwardIt2 transform(par_execution_policy_t policy, ForwardIt1 first,
+                   ForwardIt1 last, ForwardIt2 d_first, UnaryOperation unary_op) {
 
   /* implement me */
 
