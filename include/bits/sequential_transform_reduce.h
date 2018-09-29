@@ -28,7 +28,7 @@ T transform_reduce(seq_execution_policy_t policy, ForwardIt first,
 
   /* implement me */
 
-  return d_first;
+  return T{};
 }
 
 }  // namespace cppcon
