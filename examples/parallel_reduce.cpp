@@ -20,7 +20,7 @@ limitations under the License.
 #include <benchmark.h>
 #include <std_execution>
 
-constexpr int size = 2097152;
+constexpr int size = 64;//2097152;
 constexpr int iterations = 10;
 
 TEST_CASE("cppcon::reduce(par)", "parallel_reduce") {
