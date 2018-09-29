@@ -62,13 +62,17 @@ Some later exercises, those which involve programming for the GPU will have some
 
   `-DCOMPUTECPP_BITCODE=ptx64`
 
+* Note that you can disable the SYCL tests in the case you are not able to use ComputeCpp by adding the following in the above cmake command:
+
+  `-DCPPCON_SYCL_EXAMPLES=OFF`
+
 * Run CMake to configure solution (docker image):
 
   `cmake ../ -GNinja -DCMAKE_BUILD_TYPE=Debug -DOpenCL_LIBRARY=${OCL_LIB}/libOpenCL.so -DOpenCL_INCLUDE_DIR=${OCL_INC}`
 
 * Build your solution:
 
-  `cmake --build`
+  `cmake --build .`
 
 * Verify your setup by running the hello world example:
 
