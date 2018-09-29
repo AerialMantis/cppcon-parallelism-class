@@ -17,12 +17,18 @@
 cmake_minimum_required (VERSION 3.7.2)
 project (cppcon2018-parallelism-class)
 
+# Options
+
+option(CPPCON_SYCL_EXAMPLES "Requires ComputeCpp for SYCL examples" ON)
+
 # Dependencies
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 find_package(Threads REQUIRED)
-find_package(ComputeCpp REQUIRED)
+if (${CPPCON_SYCL_EXAMPLES})
+  find_package(ComputeCpp REQUIRED)
+endif()
 
 # Headers
 
