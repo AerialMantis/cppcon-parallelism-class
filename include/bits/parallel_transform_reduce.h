@@ -36,14 +36,6 @@ T transform_reduce(par_execution_policy_t policy, ForwardIt first,
   /* If the input range is empty then return the output iterator */
   if (first == last) return init;
 
-  /* Retrieve the hardware concurrency of you system */
-  unsigned int concurrency = std::thread::hardware_concurrency();
-
-  /* Calculate the data size, the base chunk size and the remainder */
-  diff_t dataSize = std::distance(first, last);
-  diff_t baseChunkSize = dataSize / concurrency;
-  diff_t remainder = dataSize % concurrency;
-
   /* Create a lambda function for processing a chunk */
   auto processChunk = [=](ForwardIt first, ForwardIt last, bool doTransform) {
     T partialReduce{0};
@@ -57,23 +49,48 @@ T transform_reduce(par_execution_policy_t policy, ForwardIt first,
     return partialReduce;
   };
 
-  /* Reserve a vector of threads for concurrency - 1 */
+  /* Set a minimum thread workload */
+  const unsigned minimumThreadWorkload = 512;
+
+  /* Calculate the data size */
+  diff_t dataSize = std::distance(first, last);
+
+  /* If the data size is below the minimum tread work load then process the
+   * entire range as a single inline chunk */
+  if (dataSize < minimumThreadWorkload) {
+    return binary_op(init, processChunk(first, last, true));
+  }
+
+  /* Retrieve the hardware concurrency of you system */
+  unsigned concurrency = std::thread::hardware_concurrency();
+
+  /* Calculate the optimal number of threads */
+  unsigned optimalNumThreads = static_cast<unsigned>(
+      dataSize / static_cast<diff_t>(minimumThreadWorkload));
+
+  /* Calculate the number of threads to execute */
+  unsigned actualNumThreads = std::min(concurrency, optimalNumThreads);
+
+  /* Calculate the base chunk size and the remainder */
+  unsigned baseChunkSize =
+      static_cast<unsigned>(dataSize / static_cast<diff_t>(actualNumThreads));
+  unsigned remainder = dataSize % actualNumThreads;
+
+  /* Reserve a vector of threads for the number of threads - 1 */
   std::vector<std::thread> threads(0);
-  threads.reserve(concurrency - 1);
+  threads.reserve(actualNumThreads - 1);
 
   /* Create a vector of partial reduction values */
-  std::vector<T> partialReductions(8);
+  std::vector<T> partialReductions(actualNumThreads);
 
-  /* Loop over the hardware concurrency, starting at 1 */
-  for (unsigned t = 1; t < concurrency; t++) {
+  /* Loop over the number of threads, starting at 1 */
+  for (unsigned t = 1; t < actualNumThreads; t++) {
     /* Calcualte the current chunk size as the base chunk size plus a potential
      * remaider */
-    diff_t currentChunkSize =
-        baseChunkSize + static_cast<diff_t>(t < remainder);
+    unsigned currentChunkSize = baseChunkSize + (t < remainder);
 
     /* Calculate the offset to the current chunk */
-    diff_t currentOffset =
-        (t * baseChunkSize) + std::min(static_cast<diff_t>(t), remainder);
+    unsigned currentOffset = (t * baseChunkSize) + std::min(t, remainder);
 
     /* Create iterators to the beggining and end of the current chunk */
     auto chunkFirst = std::next(first, currentOffset);
@@ -88,7 +105,7 @@ T transform_reduce(par_execution_policy_t policy, ForwardIt first,
 
   /* Calculate the chunk size for the chunk that will execute on the calling
    * thread and create an iterator to the end of that chunk */
-  diff_t currentChunkSize = baseChunkSize + static_cast<diff_t>(0 < remainder);
+  unsigned currentChunkSize = baseChunkSize + (0 < remainder);
   auto chunkLast = std::next(first, currentChunkSize);
 
   /* Process the chunk of the calling thread  */
@@ -101,9 +118,8 @@ T transform_reduce(par_execution_policy_t policy, ForwardIt first,
 
   /* Process all of the partial reducations as another chunk, pass the result
    * and the initial value to the binary operator and return the result */
-  return binary_op(
-      init, processChunk(partialReductions.begin(), partialReductions.end(),
-      false));
+  return binary_op(init, processChunk(partialReductions.begin(),
+                                      partialReductions.end(), false));
 }
 
 }  // namespace cppcon

@@ -27,17 +27,18 @@ limitations under the License.
 
 namespace cppcon {
 
-static inline constexpr unsigned minimumThreadWorkload = 512;
-
 template <class ForwardIt, class T, class BinaryOperation>
 T reduce(par_execution_policy_t policy, ForwardIt first, ForwardIt last, T init,
          BinaryOperation binary_op) {
+  using diff_t = typename std::iterator_traits<ForwardIt>::difference_type;
+  using value_t = typename std::iterator_traits<ForwardIt>::value_type;
+
   /* If the input range is empty then return the output iterator */
   if (first == last) return init;
 
   /* Create a lambda function for processing a chunk */
   auto processChunk = [=](ForwardIt first, ForwardIt last) {
-    T partialReduce{0};
+    value_t partialReduce{0};
     /* Iterate over the input range */
     for (; first != last; ++first) {
       /* Read the value of the input iterator, pass it to the binary operator
@@ -47,8 +48,11 @@ T reduce(par_execution_policy_t policy, ForwardIt first, ForwardIt last, T init,
     return partialReduce;
   };
 
+  /* Set a minimum thread workload */
+  const unsigned minimumThreadWorkload = 512;
+
   /* Calculate the data size */
-  unsigned dataSize = std::distance(first, last);
+  diff_t dataSize = std::distance(first, last);
 
   /* If the data size is below the minimum tread work load then process the
    * entire range as a single inline chunk */
@@ -60,13 +64,15 @@ T reduce(par_execution_policy_t policy, ForwardIt first, ForwardIt last, T init,
   unsigned concurrency = std::thread::hardware_concurrency();
 
   /* Calculate the optimal number of threads */
-  unsigned optimalNumThreads = dataSize / minimumThreadWorkload;
+  unsigned optimalNumThreads = static_cast<unsigned>(
+      dataSize / static_cast<diff_t>(minimumThreadWorkload));
 
   /* Calculate the number of threads to execute */
   unsigned actualNumThreads = std::min(concurrency, optimalNumThreads);
 
   /* Calculate the base chunk size and the remainder */
-  unsigned baseChunkSize = dataSize / actualNumThreads;
+  unsigned baseChunkSize =
+      static_cast<unsigned>(dataSize / static_cast<diff_t>(actualNumThreads));
   unsigned remainder = dataSize % actualNumThreads;
 
   /* Reserve a vector of threads for the number of threads - 1 */
@@ -74,7 +80,7 @@ T reduce(par_execution_policy_t policy, ForwardIt first, ForwardIt last, T init,
   threads.reserve(actualNumThreads - 1);
 
   /* Create a vector of partial reduction values */
-  std::vector<T> partialReductions(8);
+  std::vector<value_t> partialReductions(actualNumThreads);
 
   /* Loop over the number of threads, starting at 1 */
   for (unsigned t = 1; t < actualNumThreads; t++) {
