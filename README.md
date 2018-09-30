@@ -58,6 +58,10 @@ Some later exercises, those which involve programming for the GPU will have some
 
   `cmake ../ -G[Generator] -DCMAKE_BUILD_TYPE=[Debug/Release]`
 
+* Run CMake to configure solution (docker image):
+
+  `cmake ../ -GNinja -DCMAKE_BUILD_TYPE=Debug -DOpenCL_LIBRARY=${OCL_LIB}/libOpenCL.so -DOpenCL_INCLUDE_DIR=${OCL_INC}`
+
 * Note that if you are using an NVidia GPU, in order to use the experimental ComputeCpp SYCL support you must include the following in the above cmake command:
 
   `-DCOMPUTECPP_BITCODE=ptx64`
@@ -65,10 +69,6 @@ Some later exercises, those which involve programming for the GPU will have some
 * Note that you can disable the SYCL tests in the case you are not able to use ComputeCpp by adding the following in the above cmake command:
 
   `-DCPPCON_SYCL_EXAMPLES=OFF`
-
-* Run CMake to configure solution (docker image):
-
-  `cmake ../ -GNinja -DCMAKE_BUILD_TYPE=Debug -DOpenCL_LIBRARY=${OCL_LIB}/libOpenCL.so -DOpenCL_INCLUDE_DIR=${OCL_INC}`
 
 * Build your solution:
 
