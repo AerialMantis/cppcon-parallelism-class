@@ -60,6 +60,12 @@ add_example(promise_exception)
 
 if (${CPPCON_SYCL_EXAMPLES})
   add_sycl_example(hello_world)
+  add_sycl_example(sycl_vector_add)
+  add_sycl_example(sycl_device_selector)
+  add_sycl_example(sycl_error_handling)
+  add_sycl_example(sycl_debugging)
+  add_sycl_example(sycl_logging)
+  add_sycl_example(sycl_barrier)
 endif()
 
 add_example(sequential_transform)
