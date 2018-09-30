@@ -78,3 +78,11 @@ Some later exercises, those which involve programming for the GPU will have some
 
   `./examples/hello_world`
 
+### Installing GCC 8 (Ubuntu 16.04)
+
+* To install GCC 8 on Ubuntu 16.04 you need update the apt-get repository:
+
+`RUN apt-get install software-properties-common`
+`RUN add-apt-repository ppa:ubuntu-toolchain-r/test`
+`RUN apt-get update`
+`RUN apt-get install g++-8`
