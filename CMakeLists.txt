@@ -19,14 +19,15 @@ project (cppcon2018-parallelism-class)
 
 # Options
 
-option(CPPCON_SYCL_EXAMPLES "Requires ComputeCpp for SYCL examples" ON)
+option(CPPCON_ENABLE_SYCL "Enable SYCL. Requires ComputeCpp for SYCL examples" ON)
+option(CPPCON_ENABLE_SOLUTIONS "Enable soltuions." OFF)
 
 # Dependencies
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 find_package(Threads REQUIRED)
-if (${CPPCON_SYCL_EXAMPLES})
+if (${CPPCON_ENABLE_SYCL})
   find_package(ComputeCpp REQUIRED)
 endif()
 
@@ -34,13 +35,19 @@ endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/external/catch2)
+include_directories(${CMAKE_SOURCE_DIR}/external/stb)
 
 file(GLOB PARALLELISM_INCLUDES ${CMAKE_SOURCE_DIR}/include/*.h)
 source_group("Parallelism Headers" FILES ${PARALLELISM_INCLUDES})
 
-# Examples
+# Samples, sources and solutions
 
 enable_testing()
 
-add_subdirectory(examples)
+include(${CMAKE_MODULE_PATH}/TestingFunctions.cmake)
 
+add_subdirectory(samples)
+add_subdirectory(source)
+if (${CPPCON_ENABLE_SOLUTIONS})
+  add_subdirectory(solutions)
+endif()

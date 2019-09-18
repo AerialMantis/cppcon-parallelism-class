@@ -8,6 +8,15 @@ The majority of the exercises will require a only standard C++17 compliant compi
 
 Some later exercises, those which involve programming for the GPU will have some further dependencies. You will need to install OpenCL drivers for the GPU on your laptop and ComputeCpp SYCL (see instructions below). If you do not have a GPU on your laptop or cannot find suitable OpenCL drivers for your GPU then the CPU will suffice. If you have trouble setting this up or for any reason are unable to install the requirements on your laptop we are providing a docker image which will provide OpenCL drivers for Intel CPU and ComputeCpp SYCL (see instructions below).
 
+## Exercises
+
+| Exercise | Source | Solution |
+|----------|--------|----------|
+| [SYCL 00: Installing ComputeCpp ][exercise-sycl-00] | NA | NA |
+| [SYCL 01: Configuring a Queue ][exercise-sycl-01] | [source][source-sycl-01] | [solution][solution-sycl-01] |
+| [SYCL 02: Hello World ][exercise-sycl-02] | [source][source-sycl-02] | [solution][solution-sycl-02] |
+| [SYCL 03: Vector Add ][exercise-sycl-03] | [source][source-sycl-03] | [solution][solution-sycl-03] |
+
 ## Instructions
 
 ### Installing OpenCL drivers:
@@ -46,7 +55,7 @@ Some later exercises, those which involve programming for the GPU will have some
 
 * Pull this repository:
 
-  `git clone https://github.com/AerialMantis/cppcon2018-parallelism-class.git`
+  `git clone https://github.com/AerialMantis/cppcon-parallelism-class.git`
 
 * Create a build directory:
 
@@ -62,13 +71,17 @@ Some later exercises, those which involve programming for the GPU will have some
 
   `cmake ../ -GNinja -DCMAKE_BUILD_TYPE=Debug -DOpenCL_LIBRARY=${OCL_LIB}/libOpenCL.so -DOpenCL_INCLUDE_DIR=${OCL_INC}`
 
-* Note that if you are using an NVidia GPU, in order to use the experimental ComputeCpp SYCL support you must include the following in the above cmake command:
+* Note that if you are using an NVidia GPU, in order to use the experimental ComputeCpp SYCL support you must include the following in the above CMake command:
 
   `-DCOMPUTECPP_BITCODE=ptx64`
 
-* Note that you can disable the SYCL tests in the case you are not able to use ComputeCpp by adding the following in the above cmake command:
+* Note that you can enable building the solutions by adding the following in the above CMake command:
 
-  `-DCPPCON_SYCL_EXAMPLES=OFF`
+  `-DCPPCON_ENABLE_SYCL=OFF`
+
+* Note that you can disable the SYCL tests in the case you are not able to use ComputeCpp by adding the following in the above CMake command:
+
+  `-DCPPCON_ENABLE_SOLUTIONS=OFF`
 
 * Build your solution:
 
@@ -86,3 +99,16 @@ Some later exercises, those which involve programming for the GPU will have some
 `RUN add-apt-repository ppa:ubuntu-toolchain-r/test`
 `RUN apt-get update`
 `RUN apt-get install g++-8`
+
+[exercise-sycl-00]: ./docs/sycl_00_setting_up_computecpp.md
+[exercise-sycl-01]: ./docs/sycl_01_configuring_a_queue.md
+[exercise-sycl-02]: ./docs/sycl_02_hello_world.md
+[exercise-sycl-03]: ./docs/sycl_03_vector_add.md
+
+[source-sycl-01]: ./source/sycl_01_configuring_a_queue.md
+[source-sycl-02]: ./source/sycl_02_hello_world.md
+[source-sycl-03]: ./source/sycl_03_vector_add.md
+
+[solution-sycl-01]: ./solutions/sycl_01_configuring_a_queue.md
+[solution-sycl-02]: ./solutions/sycl_02_hello_world.md
+[solution-sycl-03]: ./solutions/sycl_03_vector_add.md
