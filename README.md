@@ -105,10 +105,10 @@ Some later exercises, those which involve programming for the GPU will have some
 [exercise-sycl-02]: ./docs/sycl_02_hello_world.md
 [exercise-sycl-03]: ./docs/sycl_03_vector_add.md
 
-[source-sycl-01]: ./source/sycl_01_configuring_a_queue.md
-[source-sycl-02]: ./source/sycl_02_hello_world.md
-[source-sycl-03]: ./source/sycl_03_vector_add.md
+[source-sycl-01]: ./source/sycl_01_configuring_a_queue.cpp
+[source-sycl-02]: ./source/sycl_02_hello_world.cpp
+[source-sycl-03]: ./source/sycl_03_vector_add.cpp
 
-[solution-sycl-01]: ./solutions/sycl_01_configuring_a_queue.md
-[solution-sycl-02]: ./solutions/sycl_02_hello_world.md
-[solution-sycl-03]: ./solutions/sycl_03_vector_add.md
+[solution-sycl-01]: ./solutions/sycl_01_configuring_a_queue.cpp
+[solution-sycl-02]: ./solutions/sycl_02_hello_world.cpp
+[solution-sycl-03]: ./solutions/sycl_03_vector_add.cpp
