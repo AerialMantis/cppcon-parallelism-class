@@ -73,5 +73,9 @@ int main() {
     });
   });
 
+  /* the queue does not wait on destruction so as there are no datavdependencies
+   * to wait for this task to complete you must explicitly wait on the queue. */
+  myQueue.wait();
+
   return 0;
 }
