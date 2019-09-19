@@ -25,9 +25,14 @@ template <class ForwardIt1, class ForwardIt2, class UnaryOperation>
 ForwardIt2 transform(seq_execution_policy_t policy, ForwardIt1 first,
                      ForwardIt1 last, ForwardIt2 d_first,
                      UnaryOperation unary_op) {
+  /* Iterate over the input range and output range */
+  for (; first != last; ++first, ++d_first) {
+    /* Read the value of the input iterator, pass it to the unary operator and
+     * write the result to the output iterator */
+    *d_first = unary_op(*first);
+  }
 
-  /* implement me */
-
+  /* Return the output iterator */
   return d_first;
 }
 
