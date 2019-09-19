@@ -8,7 +8,7 @@ The majority of the exercises will require a only standard C++17 compliant compi
 
 Some later exercises, those which involve programming for the GPU will have some further dependencies. You will need to install OpenCL drivers for the GPU on your laptop and ComputeCpp SYCL (see instructions below). If you do not have a GPU on your laptop or cannot find suitable OpenCL drivers for your GPU then the CPU will suffice. If you have trouble setting this up or for any reason are unable to install the requirements on your laptop we are providing a docker image which will provide OpenCL drivers for Intel CPU and ComputeCpp SYCL (see instructions below).
 
-## Exercises
+## SYCL Exercises
 
 | Exercise | Source | Solution |
 |----------|--------|----------|
@@ -16,6 +16,8 @@ Some later exercises, those which involve programming for the GPU will have some
 | [SYCL 01: Configuring a Queue ][exercise-sycl-01] | [source][source-sycl-01] | [solution][solution-sycl-01] |
 | [SYCL 02: Hello World ][exercise-sycl-02] | [source][source-sycl-02] | [solution][solution-sycl-02] |
 | [SYCL 03: Vector Add ][exercise-sycl-03] | [source][source-sycl-03] | [solution][solution-sycl-03] |
+| [SYCL 04: Image Grayscale ][exercise-sycl-04] | [source][source-sycl-04] | [solution][solution-sycl-04] |
+| [SYCL 05: Transpose ][exercise-sycl-05] | [source][source-sycl-05] | [solution][solution-sycl-05] |
 
 ## Instructions
 
@@ -104,11 +106,17 @@ Some later exercises, those which involve programming for the GPU will have some
 [exercise-sycl-01]: ./docs/sycl_01_configuring_a_queue.md
 [exercise-sycl-02]: ./docs/sycl_02_hello_world.md
 [exercise-sycl-03]: ./docs/sycl_03_vector_add.md
+[exercise-sycl-04]: ./docs/sycl_04_image_grayscale.md
+[exercise-sycl-05]: ./docs/sycl_05_transpose.md
 
 [source-sycl-01]: ./source/sycl_01_configuring_a_queue.cpp
 [source-sycl-02]: ./source/sycl_02_hello_world.cpp
 [source-sycl-03]: ./source/sycl_03_vector_add.cpp
+[source-sycl-04]: ./source/sycl_04_image_grayscale.cpp
+[source-sycl-05]: ./source/sycl_05_transpose.cpp
 
 [solution-sycl-01]: ./solutions/sycl_01_configuring_a_queue.cpp
 [solution-sycl-02]: ./solutions/sycl_02_hello_world.cpp
 [solution-sycl-03]: ./solutions/sycl_03_vector_add.cpp
+[solution-sycl-04]: ./solutions/sycl_04_image_grayscale.cpp
+[solution-sycl-05]: ./solutions/sycl_05_transpose.cpp
