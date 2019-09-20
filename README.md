@@ -79,19 +79,19 @@ Some later exercises, those which involve programming for the GPU will have some
 
 * Note that you can enable building the solutions by adding the following in the above CMake command:
 
-  `-DCPPCON_ENABLE_SYCL=OFF`
+  `-DCPPCON_ENABLE_SOLUTIONS=ON`
 
 * Note that you can disable the SYCL tests in the case you are not able to use ComputeCpp by adding the following in the above CMake command:
 
-  `-DCPPCON_ENABLE_SOLUTIONS=OFF`
+  `-DCPPCON_ENABLE_SYCL=OFF`
 
 * Build your solution:
 
   `cmake --build .`
 
-* Verify your setup by running the hello world example:
+* Verify your setup by running the `verify_sycl` sample:
 
-  `./examples/hello_world`
+  `./samples/verify_sycl`
 
 ### Installing GCC 8 (Ubuntu 16.04)
 
