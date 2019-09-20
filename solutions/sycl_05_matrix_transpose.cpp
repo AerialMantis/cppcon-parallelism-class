@@ -147,14 +147,14 @@ TEST_CASE("local_mem", "sycl_05_transpose") {
                     cl::sycl::range<2>(WORK_GROUP_WIDTH, WORK_GROUP_HEIGHT)),
                 [=](cl::sycl::nd_item<1> item) {
                   auto columnMajorId =
-                      (item.get_global_id(1) * inputMat.height()) +
+                      (item.get_global_id(1) * item.get_global_range(0)) +
                       item.get_global_id(0);
 
                   auto rowMajorLocalId =
-                      (item.get_local_id(0) * inputMat.width()) +
+                      (item.get_local_id(0) * item.get_local_range(1)) +
                       item.get_local_id(1);
                   auto columnMajorLocalId =
-                      (item.get_local_id(1) * inputMat.height()) +
+                      (item.get_local_id(1) * item.get_local_range(0)) +
                       item.get_local_id(0);
 
                   scratchpad[columnMajorLocalId] = inputMatAcc[columnMajorId];

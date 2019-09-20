@@ -42,6 +42,8 @@ TEST_CASE("naive", "sycl_04_grayscale") {
   unsigned char *rawInputData =
       stbi_load(inputFile.c_str(), &width, &height, &channels, 4);
 
+  if (!rawInputData) { return; }
+
   auto size = width * height * channels;
 
   auto imageData = std::vector<float>(size);
@@ -106,6 +108,8 @@ TEST_CASE("coalesced", "sycl_04_grayscale") {
   unsigned char *rawInputData =
       stbi_load(inputFile.c_str(), &width, &height, &channels, 4);
 
+  if (!rawInputData) { return; }
+
   auto size = width * height * channels;
 
   auto imageData = std::vector<float>(size);
@@ -169,6 +173,8 @@ TEST_CASE("vectorise", "sycl_04_grayscale") {
 
   unsigned char *rawInputData =
       stbi_load(inputFile.c_str(), &width, &height, &channels, 4);
+
+  if (!rawInputData) { return; }
 
   auto size = width * height * channels;
 

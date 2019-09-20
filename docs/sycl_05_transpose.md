@@ -4,8 +4,17 @@
 ---
 
 In this first exercise you will learn:
-* TODO
+* How to create a simple matrix transpose kernel.
+* How to allocate and use local memory.
+* How to synchronize work-groups.
+* How different work-group sizes effect performance.
 
 ---
 
-TODOs
+TODO
+
+1.) Write a SYCL kernel for transposing matrices.
+
+2.) Use local memory to improve global memory coalescing.
+
+3.) Try different work-group sizes.

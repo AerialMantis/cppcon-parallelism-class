@@ -4,9 +4,9 @@
 ---
 
 In this first exercise you will learn:
-* How to manage data using buffers
-* How to access data using accessors
-* How to define an nd range SYCL kernel function
+* How to manage data using buffers.
+* How to access data using accessors.
+* How to define an nd range SYCL kernel function.
 
 ---
 
