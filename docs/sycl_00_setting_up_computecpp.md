@@ -129,7 +129,7 @@ Note that if you are using an NVidia GPU, in order to use the experimental Compu
 Note that you can disable the SYCL tests in the case you are not able to use ComputeCpp by adding the following in the above cmake command:
 
 ```
--DCPPCON_SYCL_EXAMPLES=OFF
+-DCPPCON_ENABLE_SYCL=OFF
 ```
 
 Build your solution:
