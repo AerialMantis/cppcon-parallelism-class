@@ -142,7 +142,7 @@ Verify your setup by running the hello world example:
 
 
 ```
-./examples/hello_world
+./samples/verify_sycl
 ```
 
 [computecpp-developer-portal]: https://developer.codeplay.com/home/
