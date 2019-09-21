@@ -40,13 +40,13 @@ include_directories(${CMAKE_SOURCE_DIR}/external/stb)
 file(GLOB PARALLELISM_INCLUDES ${CMAKE_SOURCE_DIR}/include/*.h)
 source_group("Parallelism Headers" FILES ${PARALLELISM_INCLUDES})
 
-# Samples, sources and solutions
+# Examples, sources and solutions
 
 enable_testing()
 
 include(${CMAKE_MODULE_PATH}/TestingFunctions.cmake)
 
-add_subdirectory(samples)
+add_subdirectory(examples)
 add_subdirectory(source)
 if (${CPPCON_ENABLE_SOLUTIONS})
   add_subdirectory(solutions)
