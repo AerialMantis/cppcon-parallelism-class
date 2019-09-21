@@ -93,7 +93,7 @@ Some later exercises, those which involve programming for the GPU will have some
 
 * Verify your setup by running the `verify_sycl` sample:
 
-  `./examples/verify_sycl`
+  `./examples/example_verify_sycl`
 
 ### Installing GCC 8 (Ubuntu 16.04)
 
