@@ -6,6 +6,7 @@
 In this first exercise you will learn:
 * How to construct a queue using a device selector.
 * How to define and use your own device selector.
+* How to query information about a device.
 
 ---
 
