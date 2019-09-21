@@ -4,9 +4,9 @@
 ---
 
 In this first exercise you will learn:
-* How to create and submit a command group
-* How to define a SYCL kernel function
-* How to stream output from a SYCL kernel function
+* How to create and submit a command group.
+* How to define a SYCL kernel function.
+* How to stream output from a SYCL kernel function.
 
 ---
 
@@ -17,7 +17,7 @@ Once you have a queue you can now submit work for the device to execute, and thi
 Define a lambda to represent your command group and pass it to the submit member function of the queue as follows:
 
 ```
-myQueue.submit([&](cl::sycl::handler &cgh){
+myQueue.submit([&](cl::sycl::handler &cgh) {
   
 });
 ```

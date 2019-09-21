@@ -14,29 +14,17 @@ The first thing you must do in a SYCL application is to construct a queue that w
 
 1.) Create a queue using the default selector
 
-Construct a queue using the default selector as follows:
+Construct a SYCL queue using the default constructor and try printing the name of the device.
 
-```
-auto myQueue = cl::sycl::queue{cl::sycl::default_selector{}};
-```
+Remember the device associated with a queue can be retrieved using the `get_device` member function and information about a device can be queried using the `get_info` member function template.
 
-2.) Print the name of the device that is chosen
+2.) Try other device selectors
 
-Retrieve the chosen device from your queue and query the name of the device as follows:
+Replace the default selector with one of the other standard device selectors that are provided by SYCL (see [SYCL 1.2.1 specification][sycl-specification], sec. 4.6.1.2) and see which device those choose.
 
-```
-auto myDevice = myQueue.get_device();
-auto deviceName = myDevice.get_info<cl::sycl::info::device::name>();
-std::cout << Chosen device: << deviceName << std::endl;
-```
+3.) Create your own device selector
 
-3.) Try other device selectors
-
-Replace the default selector with one of the other standard device selectors that are provided by SYCL (see [SYCL 1.2.1 specification][sycl-specification], sec. 4.6.1.2).
-
-4.) Create your own device selector
-
-Create a device selector using the template below, implementing the function call operator, using various device info queries like the one we used earlier to query the device name (see SYCL 1.2.1 specification, sec. 4.6.4.2) and then use that device selector in the queue constructor:
+Create a device selector using the template below, implementing the function call operator, using various device and platform info queries like the one we used earlier to query the device name (see SYCL 1.2.1 specification, sec. 4.6.4.2) and then use that device selector in the queue constructor:
 
 ```
 class my_device_selector : public device_selector {
@@ -47,7 +35,9 @@ class my_device_selector : public device_selector {
 };
 ```
 
-Remember that the value returned will reflect the score for each device, and a device with a negative score will never be chosen. 
+Remember the platform associated with a device can be retrieved using the `get_platform` member function.
+
+Remember that the value returned from the device selector's function call operator will represent the score for each device, and a device with a negative score will never be chosen. 
 
 
 [sycl-specification]: https://www.khronos.org/registry/SYCL/specs/sycl-1.2.1.pdf
