@@ -33,6 +33,8 @@ Some later exercises, those which involve programming for the GPU will have some
 
 * You can download ComputeCpp SYCL and find many useful resources at https://developer.codeplay.com/.
 
+* Set the environment variable `COMPUTECPP_DIR` to point to the root directory of the ComputeCpp installation.
+
 * For help getting setup and verifying your installation see https://developer.codeplay.com/computecppce/latest/getting-started-guide.
 
 * In general ComputeCpp supports Windows 7/10 and Ubuntu 16.04/18.04, and we support Intel CPU/GPU, AMD GPU and have experimental support for NVidia GPU on Ubunutu. For a full list of the supported platforms see https://developer.codeplay.com/computecppce/latest/supported-platforms.
