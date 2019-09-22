@@ -120,13 +120,13 @@ Run CMake to configure the solutions (Docker setup)
 cmake ../ -GNinja -DCMAKE_BUILD_TYPE=Debug -DOpenCL_LIBRARY=${OCL_LIB}/libOpenCL.so -DOpenCL_INCLUDE_DIR=${OCL_INC}
 ```
 
-Note that if you are using an NVidia GPU, in order to use the experimental ComputeCpp SYCL support you must include the following in the above cmake command:
+Note that if you are using an NVidia GPU, in order to use the experimental ComputeCpp SYCL support you must include the following in the above CMake command:
 
 ```
 -DCOMPUTECPP_BITCODE=ptx64
 ```
 
-Note that you can disable the SYCL tests in the case you are not able to use ComputeCpp by adding the following in the above cmake command:
+Note that you can disable the SYCL tests in the case you are not able to use ComputeCpp by adding the following in the above CMake command:
 
 ```
 -DCPPCON_ENABLE_SYCL=OFF
