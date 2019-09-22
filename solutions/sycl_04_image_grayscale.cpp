@@ -127,9 +127,9 @@ TEST_CASE("coalesced", "sycl_04_grayscale") {
 
   cl::sycl::queue defaultQueue;
 
-  cl::sycl::buffer<float, 1> imageDataBuf(imageData.data(), size);
-
   {
+    cl::sycl::buffer<float, 1> imageDataBuf(imageData.data(), size);
+
     cppcon::benchmark(
         [&]() {
           defaultQueue.submit([&](cl::sycl::handler &cgh) {
@@ -217,9 +217,8 @@ TEST_CASE("vectorise", "sycl_04_grayscale") {
                   auto linearId = (idx[0] * height) + idx[1];
 
                   auto p = imageDataAcc[linearId];
-                  auto y = cl::sycl::float4{p.r() * 0.299f, p.g() * 0.587f,
-                                            p.b() * 0.114f, p.a()};
-                  imageDataAcc[linearId] = y;
+                  auto y = p.r() * 0.299f + p.g() * 0.587f + p.b() * 0.114f;
+                  imageDataAcc[linearId] = cl::sycl::float4{y, y, y, p.a()};
                 });
           });
 
