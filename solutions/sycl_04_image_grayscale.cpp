@@ -32,8 +32,8 @@ class vectorised;
 TEST_CASE("naive", "sycl_04_grayscale") {
   int width, height, channels;
 
-  auto inputFile = std::string(
-      "<path-to-repo>/cppcon-parallelism-class/resources/dogs.png");
+  auto inputFile =
+      std::string("<path-to-repo>/cppcon-parallelism-class/resources/dogs.png");
   auto outputFile = std::string(
       "<path-to-repo>/cppcon-parallelism-class/resources/"
       "dogs_grayscale_naive."
@@ -42,7 +42,9 @@ TEST_CASE("naive", "sycl_04_grayscale") {
   unsigned char *rawInputData =
       stbi_load(inputFile.c_str(), &width, &height, &channels, 4);
 
-  if (!rawInputData) { return; }
+  if (!rawInputData) {
+    return;
+  }
 
   auto size = width * height * channels;
 
@@ -54,32 +56,35 @@ TEST_CASE("naive", "sycl_04_grayscale") {
 
   cl::sycl::queue defaultQueue;
 
-  cl::sycl::buffer<float, 1> imageDataBuf(imageData.data(), size);
+  {
+    cl::sycl::buffer<float, 1> imageDataBuf(imageData.data(), size);
 
-  cppcon::benchmark(
-      [&]() {
-        defaultQueue.submit([&](cl::sycl::handler &cgh) {
-          auto imageDataAcc =
-              imageDataBuf
-                  .template get_access<cl::sycl::access::mode::read_write>(cgh);
+    cppcon::benchmark(
+        [&]() {
+          defaultQueue.submit([&](cl::sycl::handler &cgh) {
+            auto imageDataAcc =
+                imageDataBuf
+                    .template get_access<cl::sycl::access::mode::read_write>(
+                        cgh);
 
-          cgh.parallel_for<naive>(
-              cl::sycl::range<2>(width, height), [=](cl::sycl::id<1> idx) {
-                auto linearId =
-                    (idx[1] * width * channels) + (idx[0] * channels);
+            cgh.parallel_for<naive>(
+                cl::sycl::range<2>(width, height), [=](cl::sycl::id<2> idx) {
+                  auto linearId =
+                      (idx[1] * width * channels) + (idx[0] * channels);
 
-                float y = (imageDataAcc[linearId] * 0.299f) +
-                          (imageDataAcc[linearId + 1] * 0.587f) +
-                          (imageDataAcc[linearId + 2] * 0.114f);
-                imageDataAcc[linearId] = y;
-                imageDataAcc[linearId + 1] = y;
-                imageDataAcc[linearId + 2] = y;
-              });
-        });
+                  float y = (imageDataAcc[linearId] * 0.299f) +
+                            (imageDataAcc[linearId + 1] * 0.587f) +
+                            (imageDataAcc[linearId + 2] * 0.114f);
+                  imageDataAcc[linearId] = y;
+                  imageDataAcc[linearId + 1] = y;
+                  imageDataAcc[linearId + 2] = y;
+                });
+          });
 
-        defaultQueue.wait_and_throw();
-      },
-      100, "naive");
+          defaultQueue.wait_and_throw();
+        },
+        100, "naive");
+  }
 
   unsigned char *rawOutputData = new unsigned char[size];
   for (int i = 0; i < (size); ++i) {
@@ -98,8 +103,8 @@ TEST_CASE("naive", "sycl_04_grayscale") {
 TEST_CASE("coalesced", "sycl_04_grayscale") {
   int width, height, channels;
 
-  auto inputFile = std::string(
-      "<path-to-repo>/cppcon-parallelism-class/resources/dogs.png");
+  auto inputFile =
+      std::string("<path-to-repo>/cppcon-parallelism-class/resources/dogs.png");
   auto outputFile = std::string(
       "<path-to-repo>/cppcon-parallelism-class/resources/"
       "dogs_grayscale_coalesced."
@@ -108,7 +113,9 @@ TEST_CASE("coalesced", "sycl_04_grayscale") {
   unsigned char *rawInputData =
       stbi_load(inputFile.c_str(), &width, &height, &channels, 4);
 
-  if (!rawInputData) { return; }
+  if (!rawInputData) {
+    return;
+  }
 
   auto size = width * height * channels;
 
@@ -122,30 +129,33 @@ TEST_CASE("coalesced", "sycl_04_grayscale") {
 
   cl::sycl::buffer<float, 1> imageDataBuf(imageData.data(), size);
 
-  cppcon::benchmark(
-      [&]() {
-        defaultQueue.submit([&](cl::sycl::handler &cgh) {
-          auto imageDataAcc =
-              imageDataBuf
-                  .template get_access<cl::sycl::access::mode::read_write>(cgh);
+  {
+    cppcon::benchmark(
+        [&]() {
+          defaultQueue.submit([&](cl::sycl::handler &cgh) {
+            auto imageDataAcc =
+                imageDataBuf
+                    .template get_access<cl::sycl::access::mode::read_write>(
+                        cgh);
 
-          cgh.parallel_for<coalesced>(
-              cl::sycl::range<2>(width, height), [=](cl::sycl::id<1> idx) {
-                auto linearId =
-                    (idx[0] * height * channels) + (idx[1] * channels);
+            cgh.parallel_for<coalesced>(
+                cl::sycl::range<2>(width, height), [=](cl::sycl::id<1> idx) {
+                  auto linearId =
+                      (idx[0] * height * channels) + (idx[1] * channels);
 
-                float y = (imageDataAcc[linearId] * 0.299f) +
-                          (imageDataAcc[linearId + 1] * 0.587f) +
-                          (imageDataAcc[linearId + 2] * 0.114f);
-                imageDataAcc[linearId] = y;
-                imageDataAcc[linearId + 1] = y;
-                imageDataAcc[linearId + 2] = y;
-              });
-        });
+                  float y = (imageDataAcc[linearId] * 0.299f) +
+                            (imageDataAcc[linearId + 1] * 0.587f) +
+                            (imageDataAcc[linearId + 2] * 0.114f);
+                  imageDataAcc[linearId] = y;
+                  imageDataAcc[linearId + 1] = y;
+                  imageDataAcc[linearId + 2] = y;
+                });
+          });
 
-        defaultQueue.wait_and_throw();
-      },
-      100, "coalesced");
+          defaultQueue.wait_and_throw();
+        },
+        100, "coalesced");
+  }
 
   unsigned char *rawOutputData = new unsigned char[size];
   for (int i = 0; i < (size); ++i) {
@@ -164,8 +174,8 @@ TEST_CASE("coalesced", "sycl_04_grayscale") {
 TEST_CASE("vectorise", "sycl_04_grayscale") {
   int width, height, channels;
 
-  auto inputFile = std::string(
-      "<path-to-repo>/cppcon-parallelism-class/resources/dogs.png");
+  auto inputFile =
+      std::string("<path-to-repo>/cppcon-parallelism-class/resources/dogs.png");
   auto outputFile = std::string(
       "<path-to-repo>/cppcon-parallelism-class/resources/"
       "dogs_grayscale_vectorised."
@@ -174,7 +184,9 @@ TEST_CASE("vectorise", "sycl_04_grayscale") {
   unsigned char *rawInputData =
       stbi_load(inputFile.c_str(), &width, &height, &channels, 4);
 
-  if (!rawInputData) { return; }
+  if (!rawInputData) {
+    return;
+  }
 
   auto size = width * height * channels;
 
@@ -186,32 +198,35 @@ TEST_CASE("vectorise", "sycl_04_grayscale") {
 
   cl::sycl::queue defaultQueue;
 
-  cl::sycl::buffer<float, 1> imageDataBuf(imageData.data(), size);
+  {
+    cl::sycl::buffer<float, 1> imageDataBuf(imageData.data(), size);
 
-  auto imageDataVecBuf = imageDataBuf.reinterpret<cl::sycl::float4>(
-      cl::sycl::range<1>(size / channels));
+    auto imageDataVecBuf = imageDataBuf.reinterpret<cl::sycl::float4>(
+        cl::sycl::range<1>(size / channels));
 
-  cppcon::benchmark(
-      [&]() {
-        defaultQueue.submit([&](cl::sycl::handler &cgh) {
-          auto imageDataAcc =
-              imageDataVecBuf
-                  .template get_access<cl::sycl::access::mode::read_write>(cgh);
+    cppcon::benchmark(
+        [&]() {
+          defaultQueue.submit([&](cl::sycl::handler &cgh) {
+            auto imageDataAcc =
+                imageDataVecBuf
+                    .template get_access<cl::sycl::access::mode::read_write>(
+                        cgh);
 
-          cgh.parallel_for<vectorised>(
-              cl::sycl::range<2>(width, height), [=](cl::sycl::id<1> idx) {
-                auto linearId = (idx[0] * height) + idx[1];
+            cgh.parallel_for<vectorised>(
+                cl::sycl::range<2>(width, height), [=](cl::sycl::id<2> idx) {
+                  auto linearId = (idx[0] * height) + idx[1];
 
-                auto p = imageDataAcc[linearId];
-                auto y = cl::sycl::float4{p.r() * 0.299f, p.g() * 0.587f,
-                                          p.b() * 0.114f, p.a()};
-                imageDataAcc[linearId] = y;
-              });
-        });
+                  auto p = imageDataAcc[linearId];
+                  auto y = cl::sycl::float4{p.r() * 0.299f, p.g() * 0.587f,
+                                            p.b() * 0.114f, p.a()};
+                  imageDataAcc[linearId] = y;
+                });
+          });
 
-        defaultQueue.wait_and_throw();
-      },
-      100, "vectorised");
+          defaultQueue.wait_and_throw();
+        },
+        100, "vectorised");
+  }
 
   unsigned char *rawOutputData = new unsigned char[size];
   for (int i = 0; i < (size); ++i) {
