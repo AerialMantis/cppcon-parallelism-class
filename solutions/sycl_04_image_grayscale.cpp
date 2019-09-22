@@ -132,7 +132,7 @@ TEST_CASE("coalesced", "sycl_04_grayscale") {
           cgh.parallel_for<coalesced>(
               cl::sycl::range<2>(width, height), [=](cl::sycl::id<1> idx) {
                 auto linearId =
-                    (idx[0] * width * channels) + (idx[1] * channels);
+                    (idx[0] * height * channels) + (idx[1] * channels);
 
                 float y = (imageDataAcc[linearId] * 0.299f) +
                           (imageDataAcc[linearId + 1] * 0.587f) +
@@ -200,7 +200,7 @@ TEST_CASE("vectorise", "sycl_04_grayscale") {
 
           cgh.parallel_for<vectorised>(
               cl::sycl::range<2>(width, height), [=](cl::sycl::id<1> idx) {
-                auto linearId = (idx[0] * width) + idx[1];
+                auto linearId = (idx[0] * height) + idx[1];
 
                 auto p = imageDataAcc[linearId];
                 auto y = cl::sycl::float4{p.r() * 0.299f, p.g() * 0.587f,
