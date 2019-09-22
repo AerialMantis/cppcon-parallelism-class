@@ -14,46 +14,26 @@ In SYCL buffers are used to manage data across the host and device(s), and acces
 
 1.) Allocate your input and output vectors
 
-Allocate memory on the host for your input and output data using std::vectors and initialise the input with values.
-
-```
-auto input = std::vector<float>{};
-auto output = std::vector<float>{};
-
-input.reserve(size);
-output.reserve(size);
-
-std::iota(begin(input), end(output), 0.0f);
-std::fill(begin(input), end(output), 0.0f);
-```
+Allocate memory on the host for your input and output data using `std::vector`s and initialize the input with values.
 
 2.) Construct buffers
 
-Construct a buffer to manage your input and output data.
+Construct a buffer to manage your input and output data. The template parameters for the the `buffer` class are the type and then the dimensionality. The parameters to construct a buffer are a pointer to the host data and a `range`.
 
-```
-auto inputBuf = cl::sycl::buffer<float, 1>(input.data(),
-  cl::sycl::range<1>(intput.size());
-auto outputBuf = cl::sycl::buffer<float, 1>(input.data(),
-  cl::sycl::range<1>(intput.size());
-```
+Remember the dimensionality of the `range` must match the dimensionality of the `buffer`.
 
 3.) Construct accessors
 
-Construct an accessor for your input and output buffers.
+Construct an accessor for your input and output buffers. The template parameter to `get_access` is the access mode that specifies how you wish to use the data managed by the buffer.
 
-```
-auto inputAcc = inputBuf.get_access<cl:sycl::access::mode::read>(cgh);
-auto outputAcc = outputBuf.get_access<cl:sycl::access::mode::write>(cgh);
-```
+Remember to pass the `handler` to `get_access`, if you don't this will construct a host accessor, which behaves differently to a regular accessor.
 
 4.) Declare your kernel
 
-Declare a SYCL kernel function using the parallel_for command that takes ...
+Declare a SYCL kernel function using the `parallel_for` command with a range matching the size of the `std::vector`s. The kernel function should use the `operator[]` of the `accessor` objects to read from the inputs and write the sum to the output.
 
-```
-cgh.parallel_for<vector_add>(range<1>(input.size()),
-  [=](cl::sycl::id<1> id) {
-  outputAcc[id] = inputAAcc[id] + inputBAcc[id];
-});
-```
+Remember the `accessor`'s `operator[]` can take either a `size_t` (when the dimensionality is 1) and an `id`.
+
+5.) Try a temporary buffer
+
+You can construct a temporary `buffer` that doesn't copy back on destruction by initialising it with just a `range` and no host pointer.

@@ -50,7 +50,7 @@ void parallel_add(std::vector<T> &inputA, std::vector<T> &inputB,
   });
 }
 
-TEST_CASE("sycl_03_vector_add", "add_floats") {
+TEST_CASE("add_floats", "sycl_03_vector_add") {
   const int size = 1024;
 
   std::vector<float> inputA(size);
@@ -65,5 +65,29 @@ TEST_CASE("sycl_03_vector_add", "add_floats") {
 
   for (int i = 0; i < size; i++) {
     REQUIRE(output[i] == static_cast<float>(i * 2.0f));
+  }
+}
+
+TEST_CASE("intermediate_buffer", "sycl_03_vector_add") {
+  const int size = 1024;
+
+  std::vector<float> inputA(size);
+  std::vector<float> inputB(size);
+  std::vector<float> inputC(size);
+  std::vector<float> temp(size);
+  std::vector<float> output(size);
+
+  std::iota(begin(inputA), end(inputA), 0.0f);
+  std::iota(begin(inputB), end(inputB), 0.0f);
+  std::iota(begin(inputC), end(inputC), 0.0f);
+  std::fill(begin(temp), end(temp), 0.0f);
+  std::fill(begin(output), end(output), 0.0f);
+
+  parallel_add(inputA, inputB, temp);
+
+  parallel_add(temp, inputC, output);
+
+  for (int i = 0; i < size; i++) {
+    REQUIRE(output[i] == static_cast<float>(i * 3.0f));
   }
 }
